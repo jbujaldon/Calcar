@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="welcome_start_button">Empezar</string>
+    <string name="visualize_data_title">Visualiza los datos de tu taller</string>
+    <string name="visualize_data_description">Gana contexto sobre los beneficios y gastos anuales</string>
+    <string name="vehicles_management_title">Gestiona los vehículos con los que trabajas</string>
+    <string name="vehicles_management_description">Calcula el beneficio y ten un control detallado de la faena hecha en tus vehículos</string>
+    <string name="keep_track_work_title">Ten un control de tus trabajadores</string>
+    <string name="keep_track_work_description">Añade tus trabajadores y asignales los vehículos con los que trabajan</string>
+    <string name="previous_button">Atrás</string>
+    <string name="next_button">Continuar</string>
+    <string name="onboarding_page_staff_title">Añade tus trabajadores</string>
+    <string name="onboarding_page_staff_description">Introduce los trabajadores de tu taller para poder gestionar los gastos y gestionar el trabajo</string>
+    <string name="add_staff_button">Añadir trabajador</string>
+    <string name="onboarding_page_semi_fix_expenses_title">Añade tus gastos</string>
+    <string name="onboarding_page_semi_fix_expenses_description">Introduce los diferentes gastos semi-fijos anuales del taller para poder calcular el beneficio anual</string>
+    <string name="add_semi_fix_expense_button">Añadir gasto semi-fijo</string>
+    <string name="work_profession_mechanic">Mecánico</string>
+    <string name="work_profession_painter">Pintor</string>
+    <string name="work_profession_platter">Chapista</string>
+    <string name="work_profession_preparer">Preparador</string>
+    <string name="work_profession_manager">Jefe</string>
+    <string name="work_profession_administrative">Administrativo</string>
+    <string name="staff_profession_selection_title">Selecciona la profesión</string>
+    <string name="staff_form_title">Nuevo %s</string>
+    <string name="staff_continue_button">Continuar</string>
+    <string name="staff_personal_information_title">Información personal</string>
+    <string name="staff_work_information_title">Información del trabajo</string>
+    <string name="staff_name_placeholder">Nombre</string>
+    <string name="staff_last_names_placeholder">Apellidos</string>
+    <string name="staff_salary_placeholder">Salario anual</string>
+    <string name="staff_agreement_hours_placeholder">Horas de convenio</string>
+    <string name="staff_save_button">Guardar</string>
+    <string name="staff_save_and_add_other_button">Guardar y añadir otro trabajador</string>
+</resources>
