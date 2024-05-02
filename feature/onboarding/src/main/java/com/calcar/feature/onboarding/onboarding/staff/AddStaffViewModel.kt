@@ -1,14 +1,18 @@
 package com.calcar.feature.onboarding.onboarding.staff
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.calcar.common.core.result.onFailure
 import com.calcar.common.core.result.onSuccess
 import com.calcar.common.domain.entities.Profession
+import com.calcar.common.domain.entities.StaffId
+import com.calcar.common.domain.usecases.DeleteStaffUseCase
 import com.calcar.common.domain.usecases.SaveDirectStaffInput
 import com.calcar.common.domain.usecases.SaveDirectStaffUseCase
 import com.calcar.common.ui.navigation.Navigator
 import com.calcar.feature.onboarding.ui.models.ProfessionUi
+import com.calcar.feature.onboarding.ui.models.StaffIdUi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -76,8 +80,8 @@ internal class AddStaffViewModel(
                 // TODO
             } else {
                 saveDirectStaff()
-                    .onSuccess {  }
-                    .onFailure {  }
+                    .onSuccess { navigator.navigateUp() }
+                    .onFailure {}
             }
         }
     }
@@ -88,7 +92,7 @@ internal class AddStaffViewModel(
                 // TODO
             } else {
                 saveDirectStaff()
-                    .onSuccess {  }
+                    .onSuccess { onBackToSelection() }
                     .onFailure {  }
             }
         }

@@ -25,12 +25,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.calcar.common.ui.utils.toEuroCurrency
 import com.calcar.common.ui.wrappers.toCompose
 import com.calcar.feature.onboarding.R
 import com.calcar.feature.onboarding.ui.components.AddButton
 import com.calcar.feature.onboarding.ui.components.EmptyContent
 import com.calcar.feature.onboarding.ui.components.PageScaffold
-import com.calcar.feature.onboarding.ui.models.StaffId
+import com.calcar.feature.onboarding.ui.models.StaffIdUi
 import com.calcar.feature.onboarding.ui.models.StaffUi
 import com.calcar.feature.onboarding.ui.models.ProfessionUi
 
@@ -39,12 +40,14 @@ internal fun OnboardingStaffContent(
     page: OnboardingPageUi,
     staffList: List<StaffUi>,
     onClickAddStaff: () -> Unit,
+    onClickDeleteStaff: (StaffIdUi) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier.fillMaxSize()) {
         PageContent(
             page = page,
             staffList = staffList,
+            onClickDeleteStaff = onClickDeleteStaff,
         )
         AddButton(
             text = stringResource(R.string.add_staff_button),
@@ -61,6 +64,7 @@ internal fun OnboardingStaffContent(
 private fun PageContent(
     page: OnboardingPageUi,
     staffList: List<StaffUi>,
+    onClickDeleteStaff: (StaffIdUi) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     PageScaffold(page = page, modifier = modifier) {
@@ -74,7 +78,7 @@ private fun PageContent(
         } else {
             StaffList(
                 staffList = staffList,
-                onClickRemove = {},
+                onClickRemove = onClickDeleteStaff,
             )
         }
     }
@@ -83,7 +87,7 @@ private fun PageContent(
 @Composable
 private fun StaffList(
     staffList: List<StaffUi>,
-    onClickRemove: (StaffId) -> Unit,
+    onClickRemove: (StaffIdUi) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(modifier = modifier) {
@@ -146,7 +150,7 @@ private fun StaffInfo(
             style = MaterialTheme.typography.titleMedium,
         )
         Text(
-            text = salary.toString(),
+            text = salary.toEuroCurrency(),
             modifier = Modifier.padding(bottom = 8.dp),
             color = MaterialTheme.colorScheme.secondary,
             style = MaterialTheme.typography.bodyMedium,

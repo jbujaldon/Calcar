@@ -4,10 +4,10 @@ import androidx.annotation.StringRes
 import com.calcar.common.ui.wrappers.ColorWrapper
 import com.calcar.feature.onboarding.R
 
-data class StaffId(val value: Long)
+data class StaffIdUi(val value: Long)
 
 data class StaffUi(
-    val id: StaffId,
+    val id: StaffIdUi,
     val fullName: String,
     val salary: Double,
     val profession: ProfessionUi,

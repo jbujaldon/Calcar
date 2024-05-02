@@ -4,12 +4,10 @@ plugins {
 }
 
 android {
-    namespace = "com.calcar.dependencies"
+    namespace = "com.calcar.common.data"
 }
 
 dependencies {
-    implementation(project(":common:data"))
     implementation(project(":common:database"))
     implementation(project(":common:domain"))
-    implementation(project(":common:ui"))
 }

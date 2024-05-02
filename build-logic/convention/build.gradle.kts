@@ -20,6 +20,8 @@ tasks.withType<KotlinCompile>().configureEach {
 dependencies {
     compileOnly(libs.android.gradlePlugin)
     compileOnly(libs.kotlin.gradlePlugin)
+    compileOnly(libs.ksp.gradlePlugin)
+    compileOnly(libs.room.gradlePlugin)
 }
 
 gradlePlugin {
@@ -47,6 +49,10 @@ gradlePlugin {
         register("androidFeature") {
             id = "calcar.android.feature"
             implementationClass = "AndroidFeatureConventionPlugin"
+        }
+        register("androidRoom") {
+            id = "calcar.android.room"
+            implementationClass = "AndroidRoomConventionPlugin"
         }
     }
 }

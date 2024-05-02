@@ -1,8 +1,8 @@
 package com.calcar.common.domain.entities
 
-sealed class StaffId {
-    data object Empty : StaffId()
-    data class Id(val value: Long) : StaffId()
+sealed class StaffId(open val value: Long) {
+    data object Empty : StaffId(-1L)
+    data class Id(override val value: Long) : StaffId(value)
 }
 
 sealed class Staff {
@@ -49,9 +49,14 @@ data class Salary(val value: Double) {
     }
 }
 
-data class AgreementHours(val value: Double) {
-    init {
-        require(value > 0.0) { "Agreement hours must be positive" }
+data class AgreementHours private constructor(val value: Double) {
+    companion object {
+        operator fun invoke(value: Double?): AgreementHours {
+            if (value == null) {
+                throw IllegalArgumentException("Value must not be null")
+            }
+            return AgreementHours(value)
+        }
     }
 }
 

@@ -2,9 +2,14 @@ package com.calcar.feature.onboarding.onboarding.pages
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.calcar.common.domain.entities.Profession
+import com.calcar.common.domain.entities.Staff
+import com.calcar.common.domain.entities.StaffId
+import com.calcar.common.domain.usecases.DeleteStaffUseCase
+import com.calcar.common.domain.usecases.GetAllStaffUseCase
 import com.calcar.common.ui.navigation.Navigator
 import com.calcar.feature.onboarding.navigation.OnboardingAddStaffDestination
-import com.calcar.feature.onboarding.ui.models.StaffId
+import com.calcar.feature.onboarding.ui.models.StaffIdUi
 import com.calcar.feature.onboarding.ui.models.StaffUi
 import com.calcar.feature.onboarding.ui.models.ProfessionUi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,36 +19,20 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 internal class OnboardingViewModel(
     private val navigator: Navigator,
+    private val deleteStaffUseCase: DeleteStaffUseCase,
+    getAllStaffUseCase: GetAllStaffUseCase,
 ) : ViewModel() {
 
     private val _currentPage = MutableStateFlow(OnboardingPageUi.Staff)
     val currentPage: StateFlow<OnboardingPageUi> = _currentPage.asStateFlow()
 
-    val staffList: StateFlow<List<StaffUi>> = MutableStateFlow(
-        listOf(
-            StaffUi(
-                id = StaffId(1L),
-                fullName = "Nombre Apellidos",
-                salary = 1500.0,
-                profession = ProfessionUi.Mechanic,
-            ),
-            StaffUi(
-                id = StaffId(2L),
-                fullName = "Nombre Apellidos",
-                salary = 1500.0,
-                profession = ProfessionUi.Painter,
-            ),
-            StaffUi(
-                id = StaffId(3L),
-                fullName = "Nombre Apellidos",
-                salary = 1500.0,
-                profession = ProfessionUi.Platter,
-            ),
-        )
-    )
+    val staffList: StateFlow<List<StaffUi>> = getAllStaffUseCase(Unit)
+        .map { it.map(Staff::toStaffUi) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
     val isPreviousButtonVisible: StateFlow<Boolean> = _currentPage
         .map { it != OnboardingPageUi.Staff }
@@ -62,6 +51,12 @@ internal class OnboardingViewModel(
 
     fun onAddStaff() {
         navigator.navigateTo(OnboardingAddStaffDestination())
+    }
+
+    fun onDeleteStaff(id: StaffIdUi) {
+        viewModelScope.launch {
+            deleteStaffUseCase(StaffId.Id(id.value))
+        }
     }
 
     fun onAddSemiFixExpense() {
@@ -87,4 +82,20 @@ internal class OnboardingViewModel(
     private fun updateScreenPage(newContent: OnboardingPageUi) {
         _currentPage.value = newContent
     }
+}
+
+private fun Staff.toStaffUi(): StaffUi = StaffUi(
+    id = StaffIdUi(id.value),
+    fullName = "${fullName.name} ${fullName.lastName}",
+    salary = salary.value,
+    profession = profession.toProfessionUi(),
+)
+
+private fun Profession.toProfessionUi(): ProfessionUi = when (this) {
+    Profession.Mechanic -> ProfessionUi.Mechanic
+    Profession.Painter -> ProfessionUi.Painter
+    Profession.Platter -> ProfessionUi.Platter
+    Profession.Preparer -> ProfessionUi.Preparer
+    Profession.Manager -> ProfessionUi.Manager
+    Profession.Administrative -> ProfessionUi.Administrative
 }

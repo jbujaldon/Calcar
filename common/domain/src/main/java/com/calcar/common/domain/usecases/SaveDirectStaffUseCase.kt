@@ -27,9 +27,7 @@ internal class SaveDirectStaffUseCaseImpl(
 ) : SaveDirectStaffUseCase {
 
     override suspend fun invoke(params: SaveDirectStaffInput): AppResult<Unit, Throwable> =
-        appRunCatching {
-            staffDataSource.saveStaff(params.toDomainStaff())
-        }
+        staffDataSource.saveStaff(params.toDomainStaff())
 
     private fun SaveDirectStaffInput.toDomainStaff() = Staff.Direct(
         id = StaffId.Empty,
