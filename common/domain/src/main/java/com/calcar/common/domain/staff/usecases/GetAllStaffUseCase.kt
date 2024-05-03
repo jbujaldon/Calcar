@@ -1,8 +1,8 @@
-package com.calcar.common.domain.usecases
+package com.calcar.common.domain.staff.usecases
 
 import com.calcar.common.core.usecases.UseCase
-import com.calcar.common.domain.datasource.StaffDataSource
-import com.calcar.common.domain.entities.Staff
+import com.calcar.common.domain.staff.datasource.StaffDataSource
+import com.calcar.common.domain.staff.entities.Staff
 import kotlinx.coroutines.flow.Flow
 
 fun interface GetAllStaffUseCase : UseCase<Unit, Flow<List<Staff>>>

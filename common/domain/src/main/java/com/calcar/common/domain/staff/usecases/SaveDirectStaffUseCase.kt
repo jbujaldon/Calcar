@@ -1,15 +1,15 @@
-package com.calcar.common.domain.usecases
+package com.calcar.common.domain.staff.usecases
 
 import com.calcar.common.core.usecases.UseCaseSuspend
 import com.calcar.common.core.result.AppResult
 import com.calcar.common.core.result.appRunCatching
-import com.calcar.common.domain.datasource.StaffDataSource
-import com.calcar.common.domain.entities.AgreementHours
-import com.calcar.common.domain.entities.FullName
-import com.calcar.common.domain.entities.Profession
-import com.calcar.common.domain.entities.Salary
-import com.calcar.common.domain.entities.Staff
-import com.calcar.common.domain.entities.StaffId
+import com.calcar.common.domain.staff.datasource.StaffDataSource
+import com.calcar.common.domain.staff.entities.AgreementHours
+import com.calcar.common.domain.staff.entities.FullName
+import com.calcar.common.domain.staff.entities.Profession
+import com.calcar.common.domain.staff.entities.Salary
+import com.calcar.common.domain.staff.entities.Staff
+import com.calcar.common.domain.staff.entities.StaffId
 
 fun interface SaveDirectStaffUseCase :
     UseCaseSuspend<SaveDirectStaffInput, AppResult<Unit, Throwable>>

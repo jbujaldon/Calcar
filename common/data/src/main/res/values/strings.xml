@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="semi_fix_expense_office_material">Material de oficina</string>
+    <string name="semi_fix_expense_phone">Teléfono</string>
+    <string name="semi_fix_expense_electricity">Electricidad</string>
+    <string name="semi_fix_expense_gas">Gasoil</string>
+    <string name="semi_fix_expense_publicity">Publicidad</string>
+    <string name="semi_fix_expense_social_insurances">Seguros sociales</string>
+    <string name="semi_fix_expense_hygienic_material">Material higiénico</string>
+    <string name="semi_fix_expense_cleaning">Limpieza</string>
+    <string name="semi_fix_expense_work_dress">Ropa de trabajo</string>
+    <string name="semi_fix_expense_water">Agua</string>
+    <string name="semi_fix_expense_materials">GT, Cel Pel, Materiales</string>
+    <string name="semi_fix_expense_trash">Residuos</string>
+    <string name="semi_fix_expense_technology">Informática</string>
+    <string name="semi_fix_expense_nets">Redes</string>
+    <string name="semi_fix_expense_rent">Alquileres/Hipoteca nave</string>
+</resources>

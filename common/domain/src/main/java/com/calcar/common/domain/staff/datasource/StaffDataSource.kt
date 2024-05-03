@@ -1,9 +1,9 @@
-package com.calcar.common.domain.datasource
+package com.calcar.common.domain.staff.datasource
 
 import com.calcar.common.core.result.AppResult
 import com.calcar.common.core.result.Success
-import com.calcar.common.domain.entities.Staff
-import com.calcar.common.domain.entities.StaffId
+import com.calcar.common.domain.staff.entities.Staff
+import com.calcar.common.domain.staff.entities.StaffId
 import kotlinx.coroutines.flow.Flow
 
 interface StaffDataSource {

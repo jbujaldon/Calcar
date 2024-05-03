@@ -1,4 +1,4 @@
-package com.calcar.common.domain.entities
+package com.calcar.common.domain.staff.entities
 
 sealed class StaffId(open val value: Long) {
     data object Empty : StaffId(-1L)

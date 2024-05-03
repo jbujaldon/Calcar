@@ -26,14 +26,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.calcar.common.ui.utils.toEuroCurrency
-import com.calcar.common.ui.wrappers.toCompose
+import com.calcar.common.core.wrappers.toCompose
 import com.calcar.feature.onboarding.R
 import com.calcar.feature.onboarding.ui.components.AddButton
 import com.calcar.feature.onboarding.ui.components.EmptyContent
 import com.calcar.feature.onboarding.ui.components.PageScaffold
-import com.calcar.feature.onboarding.ui.models.StaffIdUi
-import com.calcar.feature.onboarding.ui.models.StaffUi
-import com.calcar.feature.onboarding.ui.models.ProfessionUi
+import com.calcar.common.ui.models.StaffIdUi
+import com.calcar.common.ui.models.StaffUi
+import com.calcar.common.ui.models.ProfessionUi
 
 @Composable
 internal fun OnboardingStaffContent(

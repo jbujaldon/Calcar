@@ -2,16 +2,18 @@ package com.calcar.feature.onboarding.onboarding.pages
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.calcar.common.domain.entities.Profession
-import com.calcar.common.domain.entities.Staff
-import com.calcar.common.domain.entities.StaffId
-import com.calcar.common.domain.usecases.DeleteStaffUseCase
-import com.calcar.common.domain.usecases.GetAllStaffUseCase
+import com.calcar.common.domain.semifixexpenses.entities.SemiFixExpense
+import com.calcar.common.domain.semifixexpenses.usecases.GetSavedSemiFixExpensesUseCase
+import com.calcar.common.domain.staff.entities.Profession
+import com.calcar.common.domain.staff.entities.Staff
+import com.calcar.common.domain.staff.entities.StaffId
+import com.calcar.common.domain.staff.usecases.DeleteStaffUseCase
+import com.calcar.common.domain.staff.usecases.GetAllStaffUseCase
 import com.calcar.common.ui.navigation.Navigator
 import com.calcar.feature.onboarding.navigation.OnboardingAddStaffDestination
-import com.calcar.feature.onboarding.ui.models.StaffIdUi
-import com.calcar.feature.onboarding.ui.models.StaffUi
-import com.calcar.feature.onboarding.ui.models.ProfessionUi
+import com.calcar.common.ui.models.StaffIdUi
+import com.calcar.common.ui.models.StaffUi
+import com.calcar.common.ui.models.ProfessionUi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -25,6 +27,7 @@ internal class OnboardingViewModel(
     private val navigator: Navigator,
     private val deleteStaffUseCase: DeleteStaffUseCase,
     getAllStaffUseCase: GetAllStaffUseCase,
+    getSavedSemiFixExpensesUseCase: GetSavedSemiFixExpensesUseCase,
 ) : ViewModel() {
 
     private val _currentPage = MutableStateFlow(OnboardingPageUi.Staff)
@@ -32,6 +35,9 @@ internal class OnboardingViewModel(
 
     val staffList: StateFlow<List<StaffUi>> = getAllStaffUseCase(Unit)
         .map { it.map(Staff::toStaffUi) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
+
+    val semiFixExpenses: StateFlow<List<SemiFixExpense>> = getSavedSemiFixExpensesUseCase(Unit)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
     val isPreviousButtonVisible: StateFlow<Boolean> = _currentPage

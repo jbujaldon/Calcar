@@ -11,7 +11,7 @@ val onboardingModule = module {
         WelcomeViewModel(get())
     }
     viewModel {
-        OnboardingViewModel(get(), get(), get())
+        OnboardingViewModel(get(), get(), get(), get())
     }
     viewModel {
         AddStaffViewModel(get(), get())

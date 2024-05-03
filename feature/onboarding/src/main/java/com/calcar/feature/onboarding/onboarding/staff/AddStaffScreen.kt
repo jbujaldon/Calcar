@@ -30,7 +30,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.calcar.feature.onboarding.R
-import com.calcar.feature.onboarding.ui.models.ProfessionUi
+import com.calcar.common.ui.models.ProfessionUi
 import org.koin.androidx.compose.koinViewModel
 
 @Composable

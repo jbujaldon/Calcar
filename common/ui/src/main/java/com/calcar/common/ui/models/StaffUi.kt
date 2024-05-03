@@ -1,8 +1,8 @@
-package com.calcar.feature.onboarding.ui.models
+package com.calcar.common.ui.models
 
 import androidx.annotation.StringRes
-import com.calcar.common.ui.wrappers.ColorWrapper
-import com.calcar.feature.onboarding.R
+import com.calcar.common.ui.R
+import com.calcar.common.core.wrappers.ColorWrapper
 
 data class StaffIdUi(val value: Long)
 

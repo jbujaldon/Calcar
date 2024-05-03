@@ -31,10 +31,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.calcar.common.domain.entities.StaffId
+import com.calcar.common.domain.semifixexpenses.entities.SemiFixExpense
 import com.calcar.feature.onboarding.R
-import com.calcar.feature.onboarding.ui.models.StaffIdUi
-import com.calcar.feature.onboarding.ui.models.StaffUi
+import com.calcar.common.ui.models.StaffIdUi
+import com.calcar.common.ui.models.StaffUi
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -43,16 +43,19 @@ internal fun OnboardingScreen(viewModel: OnboardingViewModel = koinViewModel()) 
     val isNextButtonEnabled by viewModel.isNextButtonEnabled.collectAsStateWithLifecycle()
     val currentPage by viewModel.currentPage.collectAsStateWithLifecycle()
     val staffList by viewModel.staffList.collectAsStateWithLifecycle()
+    val semiFixExpenses by viewModel.semiFixExpenses.collectAsStateWithLifecycle()
 
     OnboardingContent(
         currentPage = currentPage,
         staffList = staffList,
+        semiFixExpenses = semiFixExpenses,
         isPreviousButtonVisible = isPreviousButtonVisible,
         isNextButtonEnabled = isNextButtonEnabled,
         onPreviousContent = viewModel::onPreviousPage,
         onNextContent = viewModel::onNextPage,
         onAddStaff = viewModel::onAddStaff,
         onDeleteStaff = viewModel::onDeleteStaff,
+        onAddSemiFixExpense = viewModel::onAddSemiFixExpense,
     )
 }
 
@@ -61,12 +64,14 @@ internal fun OnboardingScreen(viewModel: OnboardingViewModel = koinViewModel()) 
 private fun OnboardingContent(
     currentPage: OnboardingPageUi,
     staffList: List<StaffUi>,
+    semiFixExpenses: List<SemiFixExpense>,
     isPreviousButtonVisible: Boolean,
     isNextButtonEnabled: Boolean,
     onPreviousContent: () -> Unit,
     onNextContent: () -> Unit,
     onAddStaff: () -> Unit,
     onDeleteStaff: (StaffIdUi) -> Unit,
+    onAddSemiFixExpense: () -> Unit,
 ) {
     val transition = updateTransition(targetState = currentPage, label = "")
     val progress by transition.animateFloat(label = "") { page ->
@@ -102,7 +107,8 @@ private fun OnboardingContent(
                 )
                 OnboardingPageUi.SemiFixExpenses -> OnboardingSemiFixExpensesContent(
                     page = currentPage,
-                    onClickAddSemiFixExpense = { /*TODO*/ },
+                    semiFixExpenses = semiFixExpenses,
+                    onClickAddSemiFixExpense = onAddSemiFixExpense,
                     modifier = Modifier.padding(innerPadding),
                 )
                 else -> {}

@@ -1,4 +1,4 @@
-package com.calcar.common.ui.wrappers
+package com.calcar.common.core.wrappers
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable

@@ -15,12 +15,6 @@
     <string name="onboarding_page_semi_fix_expenses_title">Añade tus gastos</string>
     <string name="onboarding_page_semi_fix_expenses_description">Introduce los diferentes gastos semi-fijos anuales del taller para poder calcular el beneficio anual</string>
     <string name="add_semi_fix_expense_button">Añadir gasto semi-fijo</string>
-    <string name="work_profession_mechanic">Mecánico</string>
-    <string name="work_profession_painter">Pintor</string>
-    <string name="work_profession_platter">Chapista</string>
-    <string name="work_profession_preparer">Preparador</string>
-    <string name="work_profession_manager">Jefe</string>
-    <string name="work_profession_administrative">Administrativo</string>
     <string name="staff_profession_selection_title">Selecciona la profesión</string>
     <string name="staff_form_title">Nuevo %s</string>
     <string name="staff_continue_button">Continuar</string>

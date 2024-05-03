@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="work_profession_mechanic">Mecánico</string>
+    <string name="work_profession_painter">Pintor</string>
+    <string name="work_profession_platter">Chapista</string>
+    <string name="work_profession_preparer">Preparador</string>
+    <string name="work_profession_manager">Jefe</string>
+    <string name="work_profession_administrative">Administrativo</string>
+</resources>
