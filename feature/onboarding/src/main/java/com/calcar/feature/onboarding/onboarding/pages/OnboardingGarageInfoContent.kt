@@ -32,6 +32,15 @@ internal fun OnboardingGarageInfoContent(
             ObjectiveMarginSection(
                 objectiveMargin = objectiveMargin,
                 onObjectiveMarginChanged = onObjectiveMarginChanged,
+                modifier = Modifier.padding(bottom = 36.dp),
+            )
+            ProductsSection(
+                filler = filler,
+                paint = paint,
+                varnish = varnish,
+                onFillerChanged = onFillerChanged,
+                onPaintChanged = onPaintChanged,
+                onVarnishChanged = onVarnishChanged,
             )
         }
     }
@@ -53,6 +62,42 @@ private fun ObjectiveMarginSection(
             onValueChanged = onObjectiveMarginChanged,
             label = stringResource(R.string.objective_margin_placeholder),
             modifier = Modifier.fillMaxWidth()
+        )
+    }
+}
+
+@Composable
+private fun ProductsSection(
+    filler: String,
+    paint: String,
+    varnish: String,
+    onFillerChanged: (String) -> Unit,
+    onPaintChanged: (String) -> Unit,
+    onVarnishChanged: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        SectionTitle(text = stringResource(R.string.products_title))
+        TextFieldInput(
+            value = filler,
+            onValueChanged = onFillerChanged,
+            label = stringResource(R.string.product_filler_placeholder),
+            modifier = Modifier.fillMaxWidth()
+        )
+        TextFieldInput(
+            value = paint,
+            onValueChanged = onPaintChanged,
+            label = stringResource(R.string.product_paint_placeholder),
+            modifier = Modifier.fillMaxWidth(),
+        )
+        TextFieldInput(
+            value = varnish,
+            onValueChanged = onVarnishChanged,
+            label = stringResource(R.string.product_varnish_placeholder),
+            modifier = Modifier.fillMaxWidth(),
         )
     }
 }
