@@ -31,6 +31,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.calcar.feature.onboarding.R
 import com.calcar.common.ui.models.ProfessionUi
+import com.calcar.feature.onboarding.ui.components.SectionTitle
+import com.calcar.feature.onboarding.ui.components.TextFieldInput
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -317,18 +319,6 @@ private fun Title(text: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun SectionTitle(text: String, modifier: Modifier = Modifier) {
-    Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
-        Text(
-            text = text,
-            color = MaterialTheme.colorScheme.primary,
-            style = MaterialTheme.typography.titleSmall,
-        )
-        HorizontalDivider(modifier = Modifier.padding(start = 8.dp))
-    }
-}
-
-@Composable
 private fun WorkProfessionList(
     selectedProfession: ProfessionUi,
     onSelectProfession: (ProfessionUi) -> Unit,
@@ -392,27 +382,6 @@ private fun SelectableOption(
             )
         }
     }
-}
-
-@Composable
-private fun TextFieldInput(
-    value: String,
-    onValueChanged: (String) -> Unit,
-    label: String,
-    modifier: Modifier = Modifier,
-) {
-    TextField(
-        value = value,
-        onValueChange = onValueChanged,
-        modifier = modifier,
-        label = { Text(text = label) },
-        colors = TextFieldDefaults.colors(
-            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-            disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-            errorContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-        )
-    )
 }
 
 @Composable

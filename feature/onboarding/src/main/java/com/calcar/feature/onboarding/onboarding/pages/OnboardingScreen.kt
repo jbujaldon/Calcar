@@ -57,6 +57,10 @@ internal fun OnboardingScreen(viewModel: OnboardingViewModel = koinViewModel()) 
     val semiFixExpenseAmountInput by viewModel.expenseAmountInput.collectAsStateWithLifecycle()
     val enableSaveSemiFixExpense by viewModel.enableSaveSemiFixExpense.collectAsStateWithLifecycle()
     val semiFixExpenseOptions by viewModel.semiFixExpenseOptions.collectAsStateWithLifecycle()
+    val objectiveMargin by viewModel.objectiveMarginInput.collectAsStateWithLifecycle()
+    val filler by viewModel.fillerInput.collectAsStateWithLifecycle()
+    val paint by viewModel.paintInput.collectAsStateWithLifecycle()
+    val varnish by viewModel.varnishInput.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
 
     OnboardingContent(
@@ -81,6 +85,14 @@ internal fun OnboardingScreen(viewModel: OnboardingViewModel = koinViewModel()) 
         onSaveAndAddOtherSemiFixExpense = viewModel::onSaveAndAddOtherSemiFixExpense,
         onCloseAddSemiFixExpenseForm = viewModel::closeSemiFixExpenseForm,
         onDeleteSemiFixExpense = viewModel::onDeleteSemiFixExpense,
+        objectiveMargin = objectiveMargin,
+        filler = filler,
+        paint = paint,
+        varnish = varnish,
+        onObjectiveMarginChanged = viewModel::onObjectiveMarginChanged,
+        onFillerChanged = viewModel::onFillerChanged,
+        onPaintChanged = viewModel::onPaintChanged,
+        onVarnishChanged = viewModel::onVarnishChanged,
         snackbarHostState = snackbarHostState,
     )
 
@@ -122,6 +134,14 @@ private fun OnboardingContent(
     onCloseAddSemiFixExpenseForm: () -> Unit,
     onDeleteSemiFixExpense: (SemiFixExpenseId) -> Unit,
     enableSaveSemiFixExpense: Boolean,
+    objectiveMargin: String,
+    filler: String,
+    paint: String,
+    varnish: String,
+    onObjectiveMarginChanged: (String) -> Unit,
+    onFillerChanged: (String) -> Unit,
+    onPaintChanged: (String) -> Unit,
+    onVarnishChanged: (String) -> Unit,
     snackbarHostState: SnackbarHostState,
 ) {
     val transition = updateTransition(targetState = currentPage, label = "")
@@ -174,7 +194,18 @@ private fun OnboardingContent(
                     onDeleteSemiFixExpense = onDeleteSemiFixExpense,
                     modifier = Modifier.padding(innerPadding),
                 )
-                else -> {}
+                OnboardingPageUi.GarageInfo -> OnboardingGarageInfoContent(
+                    page = currentPage,
+                    objectiveMargin = objectiveMargin,
+                    filler = filler,
+                    paint = paint,
+                    varnish = varnish,
+                    onObjectiveMarginChanged = onObjectiveMarginChanged,
+                    onFillerChanged = onFillerChanged,
+                    onPaintChanged = onPaintChanged,
+                    onVarnishChanged = onVarnishChanged,
+                    modifier = Modifier.padding(innerPadding),
+                )
             }
         }
     }

@@ -88,6 +88,18 @@ internal class OnboardingViewModel(
             .map { it.map(SemiFixExpenseOption::toSemiFixExpenseOptionUi) }
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000L), emptyList())
 
+    private val _objectiveMarginInput = MutableStateFlow("")
+    val objectiveMarginInput: StateFlow<String> = _objectiveMarginInput.asStateFlow()
+
+    private val _fillerInput = MutableStateFlow("")
+    val fillerInput: StateFlow<String> = _fillerInput.asStateFlow()
+
+    private val _paintInput = MutableStateFlow("")
+    val paintInput: StateFlow<String> = _paintInput.asStateFlow()
+
+    private val _varnishInput = MutableStateFlow("")
+    val varnishInput: StateFlow<String> = _varnishInput.asStateFlow()
+
     private val _snackbarState = MutableStateFlow(SnackbarState())
     val snackbarState: StateFlow<SnackbarState> = _snackbarState.asStateFlow()
 
@@ -143,18 +155,34 @@ internal class OnboardingViewModel(
         }
     }
 
+    fun onObjectiveMarginChanged(margin: String) {
+        _objectiveMarginInput.value = margin
+    }
+
+    fun onFillerChanged(filler: String) {
+        _fillerInput.value = filler
+    }
+
+    fun onPaintChanged(paint: String) {
+        _paintInput.value = paint
+    }
+
+    fun onVarnishChanged(varnish: String) {
+        _varnishInput.value = varnish
+    }
+
     fun onNextPage() {
         when (_currentPage.value) {
             OnboardingPageUi.Staff -> updateScreenPage(OnboardingPageUi.SemiFixExpenses)
-            OnboardingPageUi.SemiFixExpenses -> Unit
+            OnboardingPageUi.SemiFixExpenses -> updateScreenPage(OnboardingPageUi.GarageInfo)
             else -> Unit
         }
     }
 
     fun onPreviousPage() {
         when (_currentPage.value) {
-            OnboardingPageUi.Staff -> Unit
             OnboardingPageUi.SemiFixExpenses -> updateScreenPage(OnboardingPageUi.Staff)
+            OnboardingPageUi.GarageInfo -> updateScreenPage(OnboardingPageUi.SemiFixExpenses)
             else -> Unit
         }
     }
@@ -166,8 +194,12 @@ internal class OnboardingViewModel(
     ): Boolean = when (onboardingPage) {
         OnboardingPageUi.Staff -> staffList.isNotEmpty()
         OnboardingPageUi.SemiFixExpenses -> semiFixExpenses.isNotEmpty()
-        else -> false
+        OnboardingPageUi.GarageInfo -> isValidGarageInfo()
     }
+
+    private fun isValidGarageInfo(): Boolean = _objectiveMarginInput.value.isNotEmpty() &&
+            _fillerInput.value.isNotEmpty() && _paintInput.value.isNotEmpty() &&
+            _varnishInput.value.isNotEmpty()
 
     private fun updateScreenPage(newContent: OnboardingPageUi) {
         _currentPage.value = newContent

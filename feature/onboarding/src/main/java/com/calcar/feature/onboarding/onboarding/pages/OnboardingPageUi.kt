@@ -15,8 +15,8 @@ enum class OnboardingPageUi(
         title = R.string.onboarding_page_semi_fix_expenses_title,
         description = R.string.onboarding_page_semi_fix_expenses_description,
     ),
-    Unknown(
-        title = -1,
-        description = -1,
+    GarageInfo(
+        title = R.string.onboarding_page_garage_info_title,
+        description = R.string.onboarding_page_garage_info_description,
     )
 }

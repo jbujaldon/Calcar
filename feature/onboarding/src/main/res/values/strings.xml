@@ -33,4 +33,12 @@
     <string name="save_and_add_other_semi_fix_expense_button">Guardar y añadir otro</string>
     <string name="save_semi_fix_expense_error_message">Error al guardar el gasto semi-fijo</string>
     <string name="delete_semi_fix_expense_error_message">Error al eliminar el gasto semi-fijo</string>
+    <string name="onboarding_page_garage_info_title">Información del taller</string>
+    <string name="onboarding_page_garage_info_description">Para finalizar, introduce los datos necesarios para calcular los beneficios del taller y de los vehículos</string>
+    <string name="objective_margin_title">Margen objetivo</string>
+    <string name="objective_margin_placeholder">Margen objetivo</string>
+    <string name="products_title">Productos (L/KG/M)</string>
+    <string name="product_filler_placeholder">Aparejo RFU</string>
+    <string name="product_paint_placeholder">Pintura confeccionada RFU</string>
+    <string name="product_varnish_placeholder">Barniz RFU</string>
 </resources>
