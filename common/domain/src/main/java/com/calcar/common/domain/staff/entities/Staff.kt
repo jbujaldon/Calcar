@@ -43,9 +43,14 @@ data class FullName(val name: String, val lastName: String) {
     }
 }
 
-data class Salary(val value: Double) {
-    init {
-        require(value > 0.0) { "Salary must be positive" }
+data class Salary private constructor(val value: Double) {
+    companion object {
+        operator fun invoke(value: Double?): Salary {
+            if (value == null) {
+                throw IllegalArgumentException("Value must not be null")
+            }
+            return Salary(value)
+        }
     }
 }
 

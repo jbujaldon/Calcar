@@ -32,8 +32,8 @@ internal class SaveDirectStaffUseCaseImpl(
     private fun SaveDirectStaffInput.toDomainStaff() = Staff.Direct(
         id = StaffId.Empty,
         fullName = FullName(name, lastName),
-        salary = Salary(salary.toDouble()),
+        salary = Salary(salary.toDoubleOrNull()),
         profession = profession,
-        agreementHours = AgreementHours(hours.toDouble()),
+        agreementHours = AgreementHours(hours.toDoubleOrNull()),
     )
 }

@@ -1,5 +1,7 @@
 package com.calcar.common.data.datasources
 
+import com.calcar.common.core.result.AppResult
+import com.calcar.common.core.result.appRunCatching
 import com.calcar.common.core.wrappers.TextWrapper
 import com.calcar.common.data.R
 import com.calcar.common.database.daos.SemiFixExpensesDao
@@ -9,11 +11,13 @@ import com.calcar.common.domain.semifixexpenses.entities.Amount
 import com.calcar.common.domain.semifixexpenses.entities.SemiFixExpense
 import com.calcar.common.domain.semifixexpenses.entities.SemiFixExpenseId
 import com.calcar.common.domain.semifixexpenses.entities.SemiFixExpenseOption
+import kotlinx.coroutines.Dispatchers
 import kotlin.math.exp
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 
 class LocalSemiFixExpensesDataSource(
     private val semiFixExpensesDao: SemiFixExpensesDao,
@@ -34,17 +38,31 @@ class LocalSemiFixExpensesDataSource(
     override fun getAllSemiFixExpenseOptions(): Flow<List<SemiFixExpenseOption>> =
         flowOf(semiFixExpenseOptions)
 
+    override suspend fun saveNewSemiFixExpense(
+        semiFixExpense: SemiFixExpense,
+    ): AppResult<Unit, Throwable> = appRunCatching {
+        withContext(Dispatchers.IO) {
+            semiFixExpensesDao.insertSemiFixExpense(semiFixExpense.toDatabaseEntity())
+        }
+    }
+
     private fun SemiFixExpenseOption.isContainedIn(
         semiFixExpenses: List<SemiFixExpenseEntity>,
     ): Boolean = id.value in semiFixExpenses.map { it.id }
-
-    private fun SemiFixExpenseOption.toDomainSemiFixExpense(amount: Double): SemiFixExpense =
-        SemiFixExpense(
-            id = id,
-            name = name,
-            amount = Amount(amount)
-        )
 }
+
+private fun SemiFixExpenseOption.toDomainSemiFixExpense(amount: Double): SemiFixExpense =
+    SemiFixExpense(
+        id = id,
+        name = name,
+        amount = Amount(amount)
+    )
+
+private fun SemiFixExpense.toDatabaseEntity() =
+    SemiFixExpenseEntity(
+        id = id.value,
+        amount = amount.value,
+    )
 
 // TEMPORAL SOLUTION
 private val semiFixExpenseOptions = listOf(

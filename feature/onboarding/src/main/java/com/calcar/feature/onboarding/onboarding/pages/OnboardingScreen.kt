@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.calcar.common.domain.semifixexpenses.entities.SemiFixExpense
+import com.calcar.common.ui.models.SemiFixExpenseOptionUi
 import com.calcar.feature.onboarding.R
 import com.calcar.common.ui.models.StaffIdUi
 import com.calcar.common.ui.models.StaffUi
@@ -43,7 +44,12 @@ internal fun OnboardingScreen(viewModel: OnboardingViewModel = koinViewModel()) 
     val isNextButtonEnabled by viewModel.isNextButtonEnabled.collectAsStateWithLifecycle()
     val currentPage by viewModel.currentPage.collectAsStateWithLifecycle()
     val staffList by viewModel.staffList.collectAsStateWithLifecycle()
-    val semiFixExpenses by viewModel.semiFixExpenses.collectAsStateWithLifecycle()
+    val semiFixExpenses by viewModel.savedSemiFixExpenses.collectAsStateWithLifecycle()
+    val showAddSemiFixExpenseForm by viewModel.showSemiFixExpenseForm.collectAsStateWithLifecycle()
+    val selectedSemiFixExpenseOption by viewModel.selectedExpenseOption.collectAsStateWithLifecycle()
+    val semiFixExpenseAmountInput by viewModel.expenseAmountInput.collectAsStateWithLifecycle()
+    val enableSaveSemiFixExpense by viewModel.enableSaveSemiFixExpense.collectAsStateWithLifecycle()
+    val semiFixExpenseOptions by viewModel.semiFixExpenseOptions.collectAsStateWithLifecycle()
 
     OnboardingContent(
         currentPage = currentPage,
@@ -55,7 +61,13 @@ internal fun OnboardingScreen(viewModel: OnboardingViewModel = koinViewModel()) 
         onNextContent = viewModel::onNextPage,
         onAddStaff = viewModel::onAddStaff,
         onDeleteStaff = viewModel::onDeleteStaff,
-        onAddSemiFixExpense = viewModel::onAddSemiFixExpense,
+        onShowAddSemiFixExpense = viewModel::onShowAddSemiFixExpenseForm,
+        showAddSemiFixExpenseForm = showAddSemiFixExpenseForm,
+        selectedSemiFixExpenseOption = selectedSemiFixExpenseOption,
+        semiFixExpenseAmountInput = semiFixExpenseAmountInput,
+        enableSaveSemiFixExpense = enableSaveSemiFixExpense,
+        semiFixExpenseOptions = semiFixExpenseOptions,
+        onCloseAddSemiFixExpenseForm = viewModel::onCloseSemiFixExpenseForm,
     )
 }
 
@@ -71,7 +83,13 @@ private fun OnboardingContent(
     onNextContent: () -> Unit,
     onAddStaff: () -> Unit,
     onDeleteStaff: (StaffIdUi) -> Unit,
-    onAddSemiFixExpense: () -> Unit,
+    onShowAddSemiFixExpense: () -> Unit,
+    showAddSemiFixExpenseForm: Boolean,
+    selectedSemiFixExpenseOption: SemiFixExpenseOptionUi?,
+    semiFixExpenseOptions: List<SemiFixExpenseOptionUi>,
+    semiFixExpenseAmountInput: String,
+    onCloseAddSemiFixExpenseForm: () -> Unit,
+    enableSaveSemiFixExpense: Boolean,
 ) {
     val transition = updateTransition(targetState = currentPage, label = "")
     val progress by transition.animateFloat(label = "") { page ->
@@ -108,7 +126,13 @@ private fun OnboardingContent(
                 OnboardingPageUi.SemiFixExpenses -> OnboardingSemiFixExpensesContent(
                     page = currentPage,
                     semiFixExpenses = semiFixExpenses,
-                    onClickAddSemiFixExpense = onAddSemiFixExpense,
+                    onClickAddSemiFixExpense = onShowAddSemiFixExpense,
+                    showAddSemiFixExpenseForm = showAddSemiFixExpenseForm,
+                    selectedSemiFixExpenseOption = selectedSemiFixExpenseOption,
+                    semiFixExpenseAmountInput = semiFixExpenseAmountInput,
+                    enableSaveSemiFixExpense = enableSaveSemiFixExpense,
+                    onClickCloseSemiFixExpenseForm = onCloseAddSemiFixExpenseForm,
+                    semiFixExpenseOptions = semiFixExpenseOptions,
                     modifier = Modifier.padding(innerPadding),
                 )
                 else -> {}

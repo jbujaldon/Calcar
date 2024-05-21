@@ -30,6 +30,12 @@ internal val CalcarTypography = Typography(
         fontSize = 28.sp,
         lineHeight = 36.sp,
     ),
+    headlineSmall = TextStyle(
+        fontFamily = lato,
+        fontWeight = FontWeight.Bold,
+        fontSize = 24.sp,
+        lineHeight = 32.sp,
+    ),
     titleMedium = TextStyle(
         fontFamily = lato,
         fontWeight = FontWeight.Bold,

@@ -26,4 +26,9 @@
     <string name="staff_agreement_hours_placeholder">Horas de convenio</string>
     <string name="staff_save_button">Guardar</string>
     <string name="staff_save_and_add_other_button">Guardar y añadir otro trabajador</string>
+    <string name="add_semi_fix_expense_form_title">Añadir gasto semi-fijo</string>
+    <string name="select_semi_fix_expense_name_placeholder">Nombre del gasto</string>
+    <string name="semi_fix_expense_amount_placeholder">Cantidad €</string>
+    <string name="save_semi_fix_expense_button">Guardar</string>
+    <string name="save_and_add_other_semi_fix_expense_button">Guardar y añadir otro</string>
 </resources>

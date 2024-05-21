@@ -1,9 +1,16 @@
 package com.calcar.feature.onboarding.onboarding.pages
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.calcar.common.core.result.onFailure
+import com.calcar.common.core.result.onSuccess
 import com.calcar.common.domain.semifixexpenses.entities.SemiFixExpense
+import com.calcar.common.domain.semifixexpenses.entities.SemiFixExpenseOption
+import com.calcar.common.domain.semifixexpenses.usecases.GetAvailableSemiFixExpenseOptionsUseCase
 import com.calcar.common.domain.semifixexpenses.usecases.GetSavedSemiFixExpensesUseCase
+import com.calcar.common.domain.semifixexpenses.usecases.SaveSemiFixExpenseInput
+import com.calcar.common.domain.semifixexpenses.usecases.SaveSemiFixExpenseUseCase
 import com.calcar.common.domain.staff.entities.Profession
 import com.calcar.common.domain.staff.entities.Staff
 import com.calcar.common.domain.staff.entities.StaffId
@@ -14,6 +21,8 @@ import com.calcar.feature.onboarding.navigation.OnboardingAddStaffDestination
 import com.calcar.common.ui.models.StaffIdUi
 import com.calcar.common.ui.models.StaffUi
 import com.calcar.common.ui.models.ProfessionUi
+import com.calcar.common.ui.models.SemiFixExpenseOptionUi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -28,6 +37,8 @@ internal class OnboardingViewModel(
     private val deleteStaffUseCase: DeleteStaffUseCase,
     getAllStaffUseCase: GetAllStaffUseCase,
     getSavedSemiFixExpensesUseCase: GetSavedSemiFixExpensesUseCase,
+    getAvailableSemiFixExpenseOptionsUseCase: GetAvailableSemiFixExpenseOptionsUseCase,
+    private val saveSemiFixExpenseUseCase: SaveSemiFixExpenseUseCase,
 ) : ViewModel() {
 
     private val _currentPage = MutableStateFlow(OnboardingPageUi.Staff)
@@ -37,23 +48,52 @@ internal class OnboardingViewModel(
         .map { it.map(Staff::toStaffUi) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
-    val semiFixExpenses: StateFlow<List<SemiFixExpense>> = getSavedSemiFixExpensesUseCase(Unit)
+    val savedSemiFixExpenses: StateFlow<List<SemiFixExpense>> = getSavedSemiFixExpensesUseCase(Unit)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
     val isPreviousButtonVisible: StateFlow<Boolean> = _currentPage
         .map { it != OnboardingPageUi.Staff }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000L), false)
 
-    val isNextButtonEnabled: StateFlow<Boolean> = combine (
+    val isNextButtonEnabled: StateFlow<Boolean> = combine(
         _currentPage,
-        staffList
-    ) { onboardingPage, staffList ->
+        staffList,
+        savedSemiFixExpenses,
+    ) { onboardingPage, staffList, semiFixExpenses ->
         when (onboardingPage) {
             OnboardingPageUi.Staff -> staffList.isNotEmpty()
-            OnboardingPageUi.SemiFixExpenses -> false
+            OnboardingPageUi.SemiFixExpenses -> semiFixExpenses.isNotEmpty()
             else -> false
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000L), false)
+
+    private val _showSemiFixExpenseForm = MutableStateFlow(false)
+    val showSemiFixExpenseForm: StateFlow<Boolean> = _showSemiFixExpenseForm.asStateFlow()
+
+    private val _selectedExpenseOption = MutableStateFlow<SemiFixExpenseOptionUi?>(null)
+    val selectedExpenseOption: StateFlow<SemiFixExpenseOptionUi?> = _selectedExpenseOption.asStateFlow()
+
+    private val _expenseAmountInput = MutableStateFlow("")
+    val expenseAmountInput: StateFlow<String> = _expenseAmountInput.asStateFlow()
+
+    val enableSaveSemiFixExpense: StateFlow<Boolean> = combine(
+        _selectedExpenseOption,
+        _expenseAmountInput
+    ) { selectedName, amount ->
+        selectedName != null && amount.isNotEmpty()
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000L), false)
+
+    val semiFixExpenseOptions: StateFlow<List<SemiFixExpenseOptionUi>> =
+        getAvailableSemiFixExpenseOptionsUseCase(Unit)
+            .map { it.map(SemiFixExpenseOption::toSemiFixExpenseOptionUi) }
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000L), emptyList())
+
+    init {
+        viewModelScope.launch {
+            delay(1000L)
+            Log.d("asdd", semiFixExpenseOptions.value.toString())
+        }
+    }
 
     fun onAddStaff() {
         navigator.navigateTo(OnboardingAddStaffDestination())
@@ -65,8 +105,28 @@ internal class OnboardingViewModel(
         }
     }
 
-    fun onAddSemiFixExpense() {
+    fun onShowAddSemiFixExpenseForm() {
+        _showSemiFixExpenseForm.value = true
+    }
 
+    fun onCloseSemiFixExpenseForm() {
+        _showSemiFixExpenseForm.value = false
+    }
+
+    fun onSaveSemiFixExpense() {
+        viewModelScope.launch {
+            saveSemiFixExpense()
+                .onSuccess { onCloseSemiFixExpenseForm() }
+                .onFailure {  }
+        }
+    }
+
+    fun onSaveAndAddOtherSemiFixExpense() {
+        viewModelScope.launch {
+            saveSemiFixExpense()
+                .onSuccess { clearSemiFixExpensesFormInputs() }
+                .onFailure {  }
+        }
     }
 
     fun onNextPage() {
@@ -88,6 +148,19 @@ internal class OnboardingViewModel(
     private fun updateScreenPage(newContent: OnboardingPageUi) {
         _currentPage.value = newContent
     }
+
+    private fun clearSemiFixExpensesFormInputs() {
+        _selectedExpenseOption.value = null
+        _expenseAmountInput.value = ""
+    }
+
+    private suspend fun saveSemiFixExpense() = saveSemiFixExpenseUseCase(
+        SaveSemiFixExpenseInput(
+            id = _selectedExpenseOption.value!!.id,
+            selectedName = _selectedExpenseOption.value!!.optionName,
+            amount = _expenseAmountInput.value
+        )
+    )
 }
 
 private fun Staff.toStaffUi(): StaffUi = StaffUi(
@@ -105,3 +178,9 @@ private fun Profession.toProfessionUi(): ProfessionUi = when (this) {
     Profession.Manager -> ProfessionUi.Manager
     Profession.Administrative -> ProfessionUi.Administrative
 }
+
+private fun SemiFixExpenseOption.toSemiFixExpenseOptionUi() =
+    SemiFixExpenseOptionUi(
+        id = id.value,
+        optionName = name,
+    )

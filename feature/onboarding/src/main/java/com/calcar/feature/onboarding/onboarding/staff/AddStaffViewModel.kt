@@ -2,11 +2,14 @@ package com.calcar.feature.onboarding.onboarding.staff
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.calcar.common.core.result.AppResult
 import com.calcar.common.core.result.onFailure
 import com.calcar.common.core.result.onSuccess
 import com.calcar.common.domain.staff.entities.Profession
 import com.calcar.common.domain.staff.usecases.SaveDirectStaffInput
 import com.calcar.common.domain.staff.usecases.SaveDirectStaffUseCase
+import com.calcar.common.domain.staff.usecases.SaveIndirectStaffInput
+import com.calcar.common.domain.staff.usecases.SaveIndirectStaffUseCase
 import com.calcar.common.ui.navigation.Navigator
 import com.calcar.common.ui.models.ProfessionUi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,6 +21,7 @@ import kotlinx.coroutines.launch
 internal class AddStaffViewModel(
     private val navigator: Navigator,
     private val saveDirectStaffUseCase: SaveDirectStaffUseCase,
+    private val saveIndirectStaffUseCase: SaveIndirectStaffUseCase,
 ) : ViewModel() {
 
     private val _step = MutableStateFlow(AddStaffFormStep.Selection)
@@ -72,27 +76,35 @@ internal class AddStaffViewModel(
 
     fun onSave() {
         viewModelScope.launch {
-            if (_selectedProfession.value.isIndirect()) {
-                // TODO
-            } else {
-                saveDirectStaff()
-                    .onSuccess { navigator.navigateUp() }
-                    .onFailure {}
-            }
+            saveStaff()
+                .onSuccess { navigator.navigateUp() }
+                .onFailure {  }
         }
     }
 
     fun onSaveAndAddOther() {
         viewModelScope.launch {
-            if (_selectedProfession.value.isIndirect()) {
-                // TODO
-            } else {
-                saveDirectStaff()
-                    .onSuccess { onBackToSelection() }
-                    .onFailure {  }
-            }
+            saveStaff()
+                .onSuccess { onBackToSelection() }
+                .onFailure {  }
         }
     }
+
+    private suspend fun saveStaff(): AppResult<Unit, Throwable> =
+        if (_selectedProfession.value.isIndirect()) {
+            saveIndirectStaff()
+        } else {
+            saveDirectStaff()
+        }
+
+    private suspend fun saveIndirectStaff() = saveIndirectStaffUseCase(
+        SaveIndirectStaffInput(
+            name = _name.value,
+            lastName = _lastName.value,
+            salary = _salary.value,
+            profession = _selectedProfession.value.toDomain()
+        )
+    )
 
     private suspend fun saveDirectStaff() = saveDirectStaffUseCase(
         SaveDirectStaffInput(
