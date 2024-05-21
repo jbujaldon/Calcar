@@ -31,4 +31,6 @@
     <string name="semi_fix_expense_amount_placeholder">Cantidad €</string>
     <string name="save_semi_fix_expense_button">Guardar</string>
     <string name="save_and_add_other_semi_fix_expense_button">Guardar y añadir otro</string>
+    <string name="save_semi_fix_expense_error_message">Error al guardar el gasto semi-fijo</string>
+    <string name="delete_semi_fix_expense_error_message">Error al eliminar el gasto semi-fijo</string>
 </resources>

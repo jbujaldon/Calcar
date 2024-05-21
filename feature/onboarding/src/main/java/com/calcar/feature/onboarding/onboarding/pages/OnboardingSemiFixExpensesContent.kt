@@ -1,6 +1,5 @@
 package com.calcar.feature.onboarding.onboarding.pages
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,6 +9,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
@@ -38,9 +38,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.calcar.common.domain.semifixexpenses.entities.SemiFixExpense
-import com.calcar.common.domain.semifixexpenses.entities.SemiFixExpenseOption
+import com.calcar.common.domain.semifixexpenses.entities.SemiFixExpenseId
 import com.calcar.common.ui.models.SemiFixExpenseOptionUi
 import com.calcar.common.ui.utils.toEuroCurrency
 import com.calcar.feature.onboarding.R
@@ -48,7 +49,6 @@ import com.calcar.feature.onboarding.ui.components.AddButton
 import com.calcar.feature.onboarding.ui.components.EmptyContent
 import com.calcar.feature.onboarding.ui.components.PageScaffold
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -61,8 +61,13 @@ internal fun OnboardingSemiFixExpensesContent(
     selectedSemiFixExpenseOption: SemiFixExpenseOptionUi?,
     semiFixExpenseOptions: List<SemiFixExpenseOptionUi>,
     semiFixExpenseAmountInput: String,
+    onSelectSemiFixExpenseOption: (SemiFixExpenseOptionUi) -> Unit,
+    onSemiFixExpenseAmountChanged: (String) -> Unit,
+    onSaveSemiFixExpense: () -> Unit,
+    onSaveAndAddOtherSemiFixExpense: () -> Unit,
     enableSaveSemiFixExpense: Boolean,
     onClickCloseSemiFixExpenseForm: () -> Unit,
+    onDeleteSemiFixExpense: (SemiFixExpenseId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val sheetState = rememberModalBottomSheetState()
@@ -72,6 +77,7 @@ internal fun OnboardingSemiFixExpensesContent(
         PageContent(
             page = page,
             semiFixExpenses = semiFixExpenses,
+            onDeleteSemiFixExpense = onDeleteSemiFixExpense,
         )
         AddButton(
             text = stringResource(R.string.add_semi_fix_expense_button),
@@ -91,6 +97,13 @@ internal fun OnboardingSemiFixExpensesContent(
                     selectedSemiFixExpenseOption = selectedSemiFixExpenseOption,
                     semiFixExpenseAmountInput = semiFixExpenseAmountInput,
                     semiFixExpenseOptions = semiFixExpenseOptions,
+                    onSelectSemiFixExpenseOption = onSelectSemiFixExpenseOption,
+                    onSemiFixExpenseAmountChanged = onSemiFixExpenseAmountChanged,
+                    onSaveSemiFixExpense = onSaveSemiFixExpense,
+                    onSaveAndAddOtherSemiFixExpense = onSaveAndAddOtherSemiFixExpense,
+                    enableSaveSemiFixExpense = enableSaveSemiFixExpense,
+                    coroutineScope = coroutineScope,
+                    sheetState = sheetState,
                     modifier = Modifier
                         .padding(horizontal = 24.dp)
                         .padding(bottom = 16.dp),
@@ -104,6 +117,7 @@ internal fun OnboardingSemiFixExpensesContent(
 private fun PageContent(
     page: OnboardingPageUi,
     semiFixExpenses: List<SemiFixExpense>,
+    onDeleteSemiFixExpense: (SemiFixExpenseId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     PageScaffold(page = page, modifier = modifier) {
@@ -117,6 +131,7 @@ private fun PageContent(
         } else {
             SemiFixExpensesList(
                 semiFixExpenses = semiFixExpenses,
+                onDelete = onDeleteSemiFixExpense,
                 modifier = Modifier.fillMaxSize()
             )
         }
@@ -126,15 +141,18 @@ private fun PageContent(
 @Composable
 private fun SemiFixExpensesList(
     semiFixExpenses: List<SemiFixExpense>,
+    onDelete: (SemiFixExpenseId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(modifier = modifier) {
         items(semiFixExpenses) { semiFixExpense ->
             SemiFixExpenseItem(
                 semiFixExpense = semiFixExpense,
-                onClickRemove = {},
+                onClickDelete = { onDelete(semiFixExpense.id) },
             )
-            HorizontalDivider(modifier = Modifier.padding(start = 24.dp))
+            HorizontalDivider(
+                modifier = Modifier.padding(start = 24.dp)
+            )
         }
     }
 }
@@ -142,12 +160,17 @@ private fun SemiFixExpensesList(
 @Composable
 private fun SemiFixExpenseItem(
     semiFixExpense: SemiFixExpense,
-    onClickRemove: () -> Unit,
+    onClickDelete: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val resources = LocalContext.current.resources
 
-    Row(modifier = modifier) {
+    Row(
+        modifier = modifier
+            .padding(start = 24.dp, end = 8.dp)
+            .padding(vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = semiFixExpense.name.getText(resources),
@@ -156,13 +179,12 @@ private fun SemiFixExpenseItem(
             )
             Text(
                 text = semiFixExpense.amount.value.toEuroCurrency(),
-                modifier = Modifier.padding(bottom = 8.dp),
                 color = MaterialTheme.colorScheme.secondary,
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
         RemoveIcon(
-            onClick = onClickRemove,
+            onClick = onClickDelete,
             modifier = Modifier.align(Alignment.CenterVertically),
         )
     }
@@ -178,11 +200,19 @@ private fun RemoveIcon(onClick: () -> Unit, modifier: Modifier = Modifier) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AddSemiFixExpenseForm(
     selectedSemiFixExpenseOption: SemiFixExpenseOptionUi?,
     semiFixExpenseOptions: List<SemiFixExpenseOptionUi>,
     semiFixExpenseAmountInput: String,
+    onSelectSemiFixExpenseOption: (SemiFixExpenseOptionUi) -> Unit,
+    onSemiFixExpenseAmountChanged: (String) -> Unit,
+    onSaveSemiFixExpense: () -> Unit,
+    onSaveAndAddOtherSemiFixExpense: () -> Unit,
+    enableSaveSemiFixExpense: Boolean,
+    coroutineScope: CoroutineScope,
+    sheetState: SheetState,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
@@ -191,11 +221,16 @@ private fun AddSemiFixExpenseForm(
             selectedOptionUi = selectedSemiFixExpenseOption,
             semiFixExpenseAmount = semiFixExpenseAmountInput,
             semiFixExpenseOptions = semiFixExpenseOptions,
+            onSelectSemiFixExpenseOption = onSelectSemiFixExpenseOption,
+            onSemiFixExpenseAmountChanged = onSemiFixExpenseAmountChanged,
             modifier = Modifier.padding(top = 32.dp, bottom = 42.dp)
         )
         SaveSemiFixExpenseButtons(
-            onClickSave = { /*TODO*/ },
-            onClickSaveAndAddOther = { /*TODO*/ }
+            onClickSave = {
+                saveAddSemiFixExpense(coroutineScope, sheetState, onSaveSemiFixExpense)
+            },
+            onClickSaveAndAddOther = onSaveAndAddOtherSemiFixExpense,
+            enableSave = enableSaveSemiFixExpense,
         )
     }
 }
@@ -214,18 +249,23 @@ private fun AddSemiFixExpenseInputs(
     selectedOptionUi: SemiFixExpenseOptionUi?,
     semiFixExpenseOptions: List<SemiFixExpenseOptionUi>,
     semiFixExpenseAmount: String,
+    onSelectSemiFixExpenseOption: (SemiFixExpenseOptionUi) -> Unit,
+    onSemiFixExpenseAmountChanged: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
         SemiFixExpenseOptionSelector(
             selectedOption = selectedOptionUi,
             options = semiFixExpenseOptions,
+            onSelectOption = onSelectSemiFixExpenseOption,
             modifier = Modifier.padding(bottom = 16.dp),
         )
         TextField(
             value = semiFixExpenseAmount,
-            onValueChange = {},
+            onValueChange = onSemiFixExpenseAmountChanged,
             modifier = Modifier.fillMaxWidth(),
+            label = { Text(text = stringResource(R.string.semi_fix_expense_amount_placeholder)) },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
         )
     }
 }
@@ -235,6 +275,7 @@ private fun AddSemiFixExpenseInputs(
 private fun SemiFixExpenseOptionSelector(
     selectedOption: SemiFixExpenseOptionUi?,
     options: List<SemiFixExpenseOptionUi>,
+    onSelectOption: (SemiFixExpenseOptionUi) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val resources = LocalContext.current.resources
@@ -264,6 +305,7 @@ private fun SemiFixExpenseOptionSelector(
                 DropdownMenuItem(
                     text = { Text(text = it.optionName.getText(resources)) },
                     onClick = {
+                        onSelectOption(it)
                         isExpanded = false
                     },
                 )
@@ -276,18 +318,21 @@ private fun SemiFixExpenseOptionSelector(
 private fun SaveSemiFixExpenseButtons(
     onClickSave: () -> Unit,
     onClickSaveAndAddOther: () -> Unit,
+    enableSave: Boolean,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
         Button(
             onClick = onClickSave,
             modifier = Modifier.fillMaxWidth(),
+            enabled = enableSave,
         ) {
             Text(text = stringResource(R.string.save_semi_fix_expense_button))
         }
         OutlinedButton(
             onClick = onClickSaveAndAddOther,
             modifier = Modifier.fillMaxWidth(),
+            enabled = enableSave,
         ) {
             Text(text = stringResource(R.string.save_and_add_other_semi_fix_expense_button))
         }
@@ -295,7 +340,7 @@ private fun SaveSemiFixExpenseButtons(
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-private fun closeAddSemiFixExpenseForm(
+private fun saveAddSemiFixExpense(
     coroutineScope: CoroutineScope,
     sheetState: SheetState,
     onClose: () -> Unit,

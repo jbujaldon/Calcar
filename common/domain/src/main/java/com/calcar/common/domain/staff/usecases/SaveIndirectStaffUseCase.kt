@@ -1,6 +1,7 @@
 package com.calcar.common.domain.staff.usecases
 
 import com.calcar.common.core.result.AppResult
+import com.calcar.common.core.result.Failure
 import com.calcar.common.core.usecases.UseCaseSuspend
 import com.calcar.common.domain.staff.datasource.StaffDataSource
 import com.calcar.common.domain.staff.entities.FullName
@@ -24,7 +25,11 @@ internal class SaveIndirectStaffUseCaseImpl(
 ) : SaveIndirectStaffUseCase {
 
     override suspend fun invoke(params: SaveIndirectStaffInput): AppResult<Unit, Throwable> =
-        staffDataSource.saveStaff(params.toDomainStaff())
+        try {
+            staffDataSource.saveStaff(params.toDomainStaff())
+        } catch (e: Throwable) {
+            Failure(e)
+        }
 
     private fun SaveIndirectStaffInput.toDomainStaff() = Staff.Indirect(
         id = StaffId.Empty,

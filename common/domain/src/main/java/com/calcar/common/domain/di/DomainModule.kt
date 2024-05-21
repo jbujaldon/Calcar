@@ -1,5 +1,7 @@
 package com.calcar.common.domain.di
 
+import com.calcar.common.domain.semifixexpenses.usecases.DeleteSemiFixExpenseUseCase
+import com.calcar.common.domain.semifixexpenses.usecases.DeleteSemiFixExpenseUseCaseImpl
 import com.calcar.common.domain.semifixexpenses.usecases.GetAvailableSemiFixExpenseOptionsUseCase
 import com.calcar.common.domain.semifixexpenses.usecases.GetAvailableSemiFixExpenseOptionsUseCaseImpl
 import com.calcar.common.domain.semifixexpenses.usecases.GetSavedSemiFixExpensesUseCase
@@ -37,5 +39,8 @@ val domainModule = module {
     }
     factory<GetAvailableSemiFixExpenseOptionsUseCase> {
         GetAvailableSemiFixExpenseOptionsUseCaseImpl(get())
+    }
+    factory<DeleteSemiFixExpenseUseCase> {
+        DeleteSemiFixExpenseUseCaseImpl(get())
     }
 }

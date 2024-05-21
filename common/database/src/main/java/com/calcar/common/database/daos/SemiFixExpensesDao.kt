@@ -13,4 +13,7 @@ interface SemiFixExpensesDao {
 
     @Insert
     suspend fun insertSemiFixExpense(entity: SemiFixExpenseEntity)
+
+    @Query("DELETE FROM semi_fix_expenses WHERE id = :id")
+    suspend fun deleteSemiFixExpense(id: Long)
 }

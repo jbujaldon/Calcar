@@ -46,6 +46,14 @@ class LocalSemiFixExpensesDataSource(
         }
     }
 
+    override suspend fun deleteSemiFixExpense(
+        id: SemiFixExpenseId,
+    ): AppResult<Unit, Throwable> = appRunCatching {
+        withContext(Dispatchers.IO) {
+            semiFixExpensesDao.deleteSemiFixExpense(id.value)
+        }
+    }
+
     private fun SemiFixExpenseOption.isContainedIn(
         semiFixExpenses: List<SemiFixExpenseEntity>,
     ): Boolean = id.value in semiFixExpenses.map { it.id }

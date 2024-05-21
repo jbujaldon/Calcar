@@ -1,6 +1,7 @@
 package com.calcar.common.domain.semifixexpenses.usecases
 
 import com.calcar.common.core.result.AppResult
+import com.calcar.common.core.result.Failure
 import com.calcar.common.core.usecases.UseCaseSuspend
 import com.calcar.common.core.wrappers.TextWrapper
 import com.calcar.common.domain.semifixexpenses.datasource.SemiFixExpensesDataSource
@@ -22,7 +23,11 @@ class SaveSemiFixExpenseUseCaseImpl(
 ) : SaveSemiFixExpenseUseCase {
 
     override suspend fun invoke(params: SaveSemiFixExpenseInput): AppResult<Unit, Throwable> =
-        semiFixExpensesDataSource.saveNewSemiFixExpense(params.toDomainSemiFixExpense())
+        try {
+            semiFixExpensesDataSource.saveNewSemiFixExpense(params.toDomainSemiFixExpense())
+        } catch (e: Throwable) {
+            Failure(e)
+        }
 
     private fun SaveSemiFixExpenseInput.toDomainSemiFixExpense() =
         SemiFixExpense(

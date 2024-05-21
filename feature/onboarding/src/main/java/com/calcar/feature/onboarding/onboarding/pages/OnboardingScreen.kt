@@ -20,22 +20,29 @@ import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.calcar.common.domain.semifixexpenses.entities.SemiFixExpense
+import com.calcar.common.domain.semifixexpenses.entities.SemiFixExpenseId
 import com.calcar.common.ui.models.SemiFixExpenseOptionUi
 import com.calcar.feature.onboarding.R
 import com.calcar.common.ui.models.StaffIdUi
 import com.calcar.common.ui.models.StaffUi
+import com.calcar.common.ui.snackbar.SnackbarState
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -50,6 +57,7 @@ internal fun OnboardingScreen(viewModel: OnboardingViewModel = koinViewModel()) 
     val semiFixExpenseAmountInput by viewModel.expenseAmountInput.collectAsStateWithLifecycle()
     val enableSaveSemiFixExpense by viewModel.enableSaveSemiFixExpense.collectAsStateWithLifecycle()
     val semiFixExpenseOptions by viewModel.semiFixExpenseOptions.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     OnboardingContent(
         currentPage = currentPage,
@@ -67,8 +75,27 @@ internal fun OnboardingScreen(viewModel: OnboardingViewModel = koinViewModel()) 
         semiFixExpenseAmountInput = semiFixExpenseAmountInput,
         enableSaveSemiFixExpense = enableSaveSemiFixExpense,
         semiFixExpenseOptions = semiFixExpenseOptions,
-        onCloseAddSemiFixExpenseForm = viewModel::onCloseSemiFixExpenseForm,
+        onSelectSemiFixExpenseOption = viewModel::onSelectExpenseOption,
+        onSemiFixExpenseAmountChanged = viewModel::onSemiFixExpenseAmountChanged,
+        onSaveSemiFixExpense = viewModel::onSaveSemiFixExpense,
+        onSaveAndAddOtherSemiFixExpense = viewModel::onSaveAndAddOtherSemiFixExpense,
+        onCloseAddSemiFixExpenseForm = viewModel::closeSemiFixExpenseForm,
+        onDeleteSemiFixExpense = viewModel::onDeleteSemiFixExpense,
+        snackbarHostState = snackbarHostState,
     )
+
+    val resources = LocalContext.current.resources
+
+    LaunchedEffect(viewModel.snackbarState) {
+        viewModel.snackbarState.collect { snackbarState ->
+            snackbarState.message?.let {
+                snackbarHostState.showSnackbar(
+                    message = it.getText(resources),
+                    duration = snackbarState.duration,
+                )
+            }
+        }
+    }
 }
 
 @SuppressLint("UnusedTransitionTargetStateParameter")
@@ -88,8 +115,14 @@ private fun OnboardingContent(
     selectedSemiFixExpenseOption: SemiFixExpenseOptionUi?,
     semiFixExpenseOptions: List<SemiFixExpenseOptionUi>,
     semiFixExpenseAmountInput: String,
+    onSelectSemiFixExpenseOption: (SemiFixExpenseOptionUi) -> Unit,
+    onSemiFixExpenseAmountChanged: (String) -> Unit,
+    onSaveSemiFixExpense: () -> Unit,
+    onSaveAndAddOtherSemiFixExpense: () -> Unit,
     onCloseAddSemiFixExpenseForm: () -> Unit,
+    onDeleteSemiFixExpense: (SemiFixExpenseId) -> Unit,
     enableSaveSemiFixExpense: Boolean,
+    snackbarHostState: SnackbarHostState,
 ) {
     val transition = updateTransition(targetState = currentPage, label = "")
     val progress by transition.animateFloat(label = "") { page ->
@@ -111,6 +144,7 @@ private fun OnboardingContent(
                 onNextPage = onNextContent,
             )
         },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { innerPadding ->
         transition.AnimatedContent(
             transitionSpec = { slideTransition() },
@@ -133,6 +167,11 @@ private fun OnboardingContent(
                     enableSaveSemiFixExpense = enableSaveSemiFixExpense,
                     onClickCloseSemiFixExpenseForm = onCloseAddSemiFixExpenseForm,
                     semiFixExpenseOptions = semiFixExpenseOptions,
+                    onSelectSemiFixExpenseOption = onSelectSemiFixExpenseOption,
+                    onSemiFixExpenseAmountChanged = onSemiFixExpenseAmountChanged,
+                    onSaveSemiFixExpense = onSaveSemiFixExpense,
+                    onSaveAndAddOtherSemiFixExpense = onSaveAndAddOtherSemiFixExpense,
+                    onDeleteSemiFixExpense = onDeleteSemiFixExpense,
                     modifier = Modifier.padding(innerPadding),
                 )
                 else -> {}

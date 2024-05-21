@@ -1,12 +1,14 @@
 package com.calcar.feature.onboarding.onboarding.pages
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.calcar.common.core.result.onFailure
 import com.calcar.common.core.result.onSuccess
+import com.calcar.common.core.wrappers.TextWrapper
 import com.calcar.common.domain.semifixexpenses.entities.SemiFixExpense
+import com.calcar.common.domain.semifixexpenses.entities.SemiFixExpenseId
 import com.calcar.common.domain.semifixexpenses.entities.SemiFixExpenseOption
+import com.calcar.common.domain.semifixexpenses.usecases.DeleteSemiFixExpenseUseCase
 import com.calcar.common.domain.semifixexpenses.usecases.GetAvailableSemiFixExpenseOptionsUseCase
 import com.calcar.common.domain.semifixexpenses.usecases.GetSavedSemiFixExpensesUseCase
 import com.calcar.common.domain.semifixexpenses.usecases.SaveSemiFixExpenseInput
@@ -22,7 +24,8 @@ import com.calcar.common.ui.models.StaffIdUi
 import com.calcar.common.ui.models.StaffUi
 import com.calcar.common.ui.models.ProfessionUi
 import com.calcar.common.ui.models.SemiFixExpenseOptionUi
-import kotlinx.coroutines.delay
+import com.calcar.common.ui.snackbar.SnackbarState
+import com.calcar.feature.onboarding.R
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -39,6 +42,7 @@ internal class OnboardingViewModel(
     getSavedSemiFixExpensesUseCase: GetSavedSemiFixExpensesUseCase,
     getAvailableSemiFixExpenseOptionsUseCase: GetAvailableSemiFixExpenseOptionsUseCase,
     private val saveSemiFixExpenseUseCase: SaveSemiFixExpenseUseCase,
+    private val deleteSemiFixExpenseUseCase: DeleteSemiFixExpenseUseCase,
 ) : ViewModel() {
 
     private val _currentPage = MutableStateFlow(OnboardingPageUi.Staff)
@@ -60,11 +64,7 @@ internal class OnboardingViewModel(
         staffList,
         savedSemiFixExpenses,
     ) { onboardingPage, staffList, semiFixExpenses ->
-        when (onboardingPage) {
-            OnboardingPageUi.Staff -> staffList.isNotEmpty()
-            OnboardingPageUi.SemiFixExpenses -> semiFixExpenses.isNotEmpty()
-            else -> false
-        }
+        isNextPageEnabled(onboardingPage, staffList, semiFixExpenses)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000L), false)
 
     private val _showSemiFixExpenseForm = MutableStateFlow(false)
@@ -88,12 +88,8 @@ internal class OnboardingViewModel(
             .map { it.map(SemiFixExpenseOption::toSemiFixExpenseOptionUi) }
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000L), emptyList())
 
-    init {
-        viewModelScope.launch {
-            delay(1000L)
-            Log.d("asdd", semiFixExpenseOptions.value.toString())
-        }
-    }
+    private val _snackbarState = MutableStateFlow(SnackbarState())
+    val snackbarState: StateFlow<SnackbarState> = _snackbarState.asStateFlow()
 
     fun onAddStaff() {
         navigator.navigateTo(OnboardingAddStaffDestination())
@@ -109,15 +105,23 @@ internal class OnboardingViewModel(
         _showSemiFixExpenseForm.value = true
     }
 
-    fun onCloseSemiFixExpenseForm() {
+    fun closeSemiFixExpenseForm() {
         _showSemiFixExpenseForm.value = false
+    }
+
+    fun onSelectExpenseOption(option: SemiFixExpenseOptionUi) {
+        _selectedExpenseOption.value = option
+    }
+
+    fun onSemiFixExpenseAmountChanged(amount: String) {
+        _expenseAmountInput.value = amount
     }
 
     fun onSaveSemiFixExpense() {
         viewModelScope.launch {
             saveSemiFixExpense()
-                .onSuccess { onCloseSemiFixExpenseForm() }
-                .onFailure {  }
+                .onSuccess { clearAndCloseSemiFixExpenseForm() }
+                .onFailure { showSaveSemiFixExpenseError() }
         }
     }
 
@@ -125,7 +129,17 @@ internal class OnboardingViewModel(
         viewModelScope.launch {
             saveSemiFixExpense()
                 .onSuccess { clearSemiFixExpensesFormInputs() }
-                .onFailure {  }
+                .onFailure { showSaveSemiFixExpenseError() }
+        }
+    }
+
+    fun onDeleteSemiFixExpense(id: SemiFixExpenseId) {
+        viewModelScope.launch {
+            deleteSemiFixExpenseUseCase(id).onFailure {
+                showSemiFixExpenseErrorMessage(
+                    message = TextWrapper.Resource(R.string.delete_semi_fix_expense_error_message)
+                )
+            }
         }
     }
 
@@ -145,6 +159,16 @@ internal class OnboardingViewModel(
         }
     }
 
+    private fun isNextPageEnabled(
+        onboardingPage: OnboardingPageUi,
+        staffList: List<StaffUi>,
+        semiFixExpenses: List<SemiFixExpense>,
+    ): Boolean = when (onboardingPage) {
+        OnboardingPageUi.Staff -> staffList.isNotEmpty()
+        OnboardingPageUi.SemiFixExpenses -> semiFixExpenses.isNotEmpty()
+        else -> false
+    }
+
     private fun updateScreenPage(newContent: OnboardingPageUi) {
         _currentPage.value = newContent
     }
@@ -161,6 +185,22 @@ internal class OnboardingViewModel(
             amount = _expenseAmountInput.value
         )
     )
+
+    private fun showSaveSemiFixExpenseError() {
+        showSemiFixExpenseErrorMessage(
+            message = TextWrapper.Resource(R.string.save_semi_fix_expense_error_message)
+        )
+        clearAndCloseSemiFixExpenseForm()
+    }
+
+    private fun clearAndCloseSemiFixExpenseForm() {
+        clearSemiFixExpensesFormInputs()
+        closeSemiFixExpenseForm()
+    }
+
+    private fun showSemiFixExpenseErrorMessage(message: TextWrapper) {
+        _snackbarState.value = SnackbarState(message = message)
+    }
 }
 
 private fun Staff.toStaffUi(): StaffUi = StaffUi(

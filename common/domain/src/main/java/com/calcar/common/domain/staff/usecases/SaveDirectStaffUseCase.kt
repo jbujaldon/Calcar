@@ -2,6 +2,7 @@ package com.calcar.common.domain.staff.usecases
 
 import com.calcar.common.core.usecases.UseCaseSuspend
 import com.calcar.common.core.result.AppResult
+import com.calcar.common.core.result.Failure
 import com.calcar.common.core.result.appRunCatching
 import com.calcar.common.domain.staff.datasource.StaffDataSource
 import com.calcar.common.domain.staff.entities.AgreementHours
@@ -27,7 +28,11 @@ internal class SaveDirectStaffUseCaseImpl(
 ) : SaveDirectStaffUseCase {
 
     override suspend fun invoke(params: SaveDirectStaffInput): AppResult<Unit, Throwable> =
-        staffDataSource.saveStaff(params.toDomainStaff())
+        try {
+            staffDataSource.saveStaff(params.toDomainStaff())
+        } catch (e: Throwable) {
+            Failure(e)
+        }
 
     private fun SaveDirectStaffInput.toDomainStaff() = Staff.Direct(
         id = StaffId.Empty,
