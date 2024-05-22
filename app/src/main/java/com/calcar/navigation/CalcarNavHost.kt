@@ -26,7 +26,7 @@ import org.koin.compose.koinInject
 fun CalcarNavHost(
     appState: CalcarAppState,
     modifier: Modifier = Modifier,
-    startDestination: Destination = WelcomeDestination,
+    startDestination: Destination,
 ) {
     val navController = appState.navController
     val navigator: Navigator = koinInject()

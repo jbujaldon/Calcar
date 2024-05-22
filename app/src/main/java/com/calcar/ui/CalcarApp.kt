@@ -7,11 +7,18 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.calcar.feature.onboarding.navigation.WelcomeDestination
+import com.calcar.feature.vehicles.navigation.VehiclesDestination
 import com.calcar.navigation.CalcarNavHost
 
 @Composable
-fun CalcarApp() {
+fun CalcarApp(isOnboardingCompleted: Boolean) {
     val appState = rememberCalcarAppState()
+    val startDestination = if (isOnboardingCompleted) {
+        VehiclesDestination
+    } else {
+        WelcomeDestination
+    }
 
     Scaffold(
         modifier = Modifier
@@ -22,6 +29,7 @@ fun CalcarApp() {
         CalcarNavHost(
             appState = appState,
             modifier = Modifier.padding(innerPadding),
+            startDestination = startDestination,
         )
     }
 }

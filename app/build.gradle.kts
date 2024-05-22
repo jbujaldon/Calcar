@@ -36,6 +36,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":common:domain"))
     implementation(project(":common:ui"))
     implementation(project(":dependencies"))
     implementation(project(":feature:onboarding"))
@@ -43,4 +44,5 @@ dependencies {
 
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.core.splashscreen)
 }
