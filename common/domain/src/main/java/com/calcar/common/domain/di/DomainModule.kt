@@ -1,5 +1,7 @@
 package com.calcar.common.domain.di
 
+import com.calcar.common.domain.garage.usecases.SaveGarageInformationUseCase
+import com.calcar.common.domain.garage.usecases.SaveGarageInformationUseCaseImpl
 import com.calcar.common.domain.semifixexpenses.usecases.DeleteSemiFixExpenseUseCase
 import com.calcar.common.domain.semifixexpenses.usecases.DeleteSemiFixExpenseUseCaseImpl
 import com.calcar.common.domain.semifixexpenses.usecases.GetAvailableSemiFixExpenseOptionsUseCase
@@ -16,6 +18,10 @@ import com.calcar.common.domain.staff.usecases.SaveDirectStaffUseCase
 import com.calcar.common.domain.staff.usecases.SaveDirectStaffUseCaseImpl
 import com.calcar.common.domain.staff.usecases.SaveIndirectStaffUseCase
 import com.calcar.common.domain.staff.usecases.SaveIndirectStaffUseCaseImpl
+import com.calcar.common.domain.user.usecases.CompleteOnboardingUseCase
+import com.calcar.common.domain.user.usecases.CompleteOnboardingUseCaseImpl
+import com.calcar.common.domain.user.usecases.GetIsOnboardingCompletedUseCase
+import com.calcar.common.domain.user.usecases.GetIsOnboardingCompletedUseCaseImpl
 import org.koin.dsl.module
 
 val domainModule = module {
@@ -42,5 +48,14 @@ val domainModule = module {
     }
     factory<DeleteSemiFixExpenseUseCase> {
         DeleteSemiFixExpenseUseCaseImpl(get())
+    }
+    factory<SaveGarageInformationUseCase> {
+        SaveGarageInformationUseCaseImpl(get())
+    }
+    factory<CompleteOnboardingUseCase> {
+        CompleteOnboardingUseCaseImpl(get())
+    }
+    factory<GetIsOnboardingCompletedUseCase> {
+        GetIsOnboardingCompletedUseCaseImpl(get())
     }
 }

@@ -16,6 +16,7 @@ import com.calcar.common.ui.navigation.Navigator
 import com.calcar.common.ui.navigation.Route
 import com.calcar.feature.onboarding.navigation.WelcomeDestination
 import com.calcar.feature.onboarding.navigation.onboardingRoute
+import com.calcar.feature.vehicles.navigation.vehiclesRoute
 import com.calcar.ui.CalcarAppState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -37,6 +38,7 @@ fun CalcarNavHost(
         modifier = modifier,
     ) {
         onboardingRoute()
+        vehiclesRoute()
     }
     LaunchedEffect(Unit) {
         handleNavEvents(navigator, navController) {

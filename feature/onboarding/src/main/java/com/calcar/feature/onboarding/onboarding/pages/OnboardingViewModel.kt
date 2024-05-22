@@ -1,10 +1,15 @@
 package com.calcar.feature.onboarding.onboarding.pages
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.calcar.common.core.result.AppResult
+import com.calcar.common.core.result.andThen
 import com.calcar.common.core.result.onFailure
 import com.calcar.common.core.result.onSuccess
 import com.calcar.common.core.wrappers.TextWrapper
+import com.calcar.common.domain.garage.usecases.GarageInformationInput
+import com.calcar.common.domain.garage.usecases.SaveGarageInformationUseCase
 import com.calcar.common.domain.semifixexpenses.entities.SemiFixExpense
 import com.calcar.common.domain.semifixexpenses.entities.SemiFixExpenseId
 import com.calcar.common.domain.semifixexpenses.entities.SemiFixExpenseOption
@@ -18,6 +23,7 @@ import com.calcar.common.domain.staff.entities.Staff
 import com.calcar.common.domain.staff.entities.StaffId
 import com.calcar.common.domain.staff.usecases.DeleteStaffUseCase
 import com.calcar.common.domain.staff.usecases.GetAllStaffUseCase
+import com.calcar.common.domain.user.usecases.CompleteOnboardingUseCase
 import com.calcar.common.ui.navigation.Navigator
 import com.calcar.feature.onboarding.navigation.OnboardingAddStaffDestination
 import com.calcar.common.ui.models.StaffIdUi
@@ -26,6 +32,7 @@ import com.calcar.common.ui.models.ProfessionUi
 import com.calcar.common.ui.models.SemiFixExpenseOptionUi
 import com.calcar.common.ui.snackbar.SnackbarState
 import com.calcar.feature.onboarding.R
+import com.calcar.feature.vehicles.navigation.VehiclesDestination
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -43,6 +50,8 @@ internal class OnboardingViewModel(
     getAvailableSemiFixExpenseOptionsUseCase: GetAvailableSemiFixExpenseOptionsUseCase,
     private val saveSemiFixExpenseUseCase: SaveSemiFixExpenseUseCase,
     private val deleteSemiFixExpenseUseCase: DeleteSemiFixExpenseUseCase,
+    private val saveGarageInformationUseCase: SaveGarageInformationUseCase,
+    private val completeOnboardingUseCase: CompleteOnboardingUseCase,
 ) : ViewModel() {
 
     private val _currentPage = MutableStateFlow(OnboardingPageUi.Staff)
@@ -59,14 +68,6 @@ internal class OnboardingViewModel(
         .map { it != OnboardingPageUi.Staff }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000L), false)
 
-    val isNextButtonEnabled: StateFlow<Boolean> = combine(
-        _currentPage,
-        staffList,
-        savedSemiFixExpenses,
-    ) { onboardingPage, staffList, semiFixExpenses ->
-        isNextPageEnabled(onboardingPage, staffList, semiFixExpenses)
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000L), false)
-
     private val _showSemiFixExpenseForm = MutableStateFlow(false)
     val showSemiFixExpenseForm: StateFlow<Boolean> = _showSemiFixExpenseForm.asStateFlow()
 
@@ -75,18 +76,6 @@ internal class OnboardingViewModel(
 
     private val _expenseAmountInput = MutableStateFlow("")
     val expenseAmountInput: StateFlow<String> = _expenseAmountInput.asStateFlow()
-
-    val enableSaveSemiFixExpense: StateFlow<Boolean> = combine(
-        _selectedExpenseOption,
-        _expenseAmountInput
-    ) { selectedName, amount ->
-        selectedName != null && amount.isNotEmpty()
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000L), false)
-
-    val semiFixExpenseOptions: StateFlow<List<SemiFixExpenseOptionUi>> =
-        getAvailableSemiFixExpenseOptionsUseCase(Unit)
-            .map { it.map(SemiFixExpenseOption::toSemiFixExpenseOptionUi) }
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000L), emptyList())
 
     private val _objectiveMarginInput = MutableStateFlow("")
     val objectiveMarginInput: StateFlow<String> = _objectiveMarginInput.asStateFlow()
@@ -102,6 +91,42 @@ internal class OnboardingViewModel(
 
     private val _snackbarState = MutableStateFlow(SnackbarState())
     val snackbarState: StateFlow<SnackbarState> = _snackbarState.asStateFlow()
+
+    private val isGarageInformationValid: StateFlow<Boolean> = combine(
+        _objectiveMarginInput,
+        _fillerInput,
+        _paintInput,
+        _varnishInput,
+    ) { objectiveMargin, filler, paint, varnish ->
+        objectiveMargin.isNotEmpty() && filler.isNotEmpty() && paint.isNotEmpty()
+                && varnish.isNotEmpty()
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000L), false)
+
+    val isNextButtonEnabled: StateFlow<Boolean> = combine(
+        _currentPage,
+        staffList,
+        savedSemiFixExpenses,
+        isGarageInformationValid,
+    ) { onboardingPage, staffList, semiFixExpenses, isGarageInformationValid ->
+        isNextPageEnabled(
+            onboardingPage = onboardingPage,
+            staffList = staffList,
+            semiFixExpenses = semiFixExpenses,
+            isGarageInformationValid = isGarageInformationValid,
+        )
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000L), false)
+
+    val enableSaveSemiFixExpense: StateFlow<Boolean> = combine(
+        _selectedExpenseOption,
+        _expenseAmountInput
+    ) { selectedName, amount ->
+        selectedName != null && amount.isNotEmpty()
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000L), false)
+
+    val semiFixExpenseOptions: StateFlow<List<SemiFixExpenseOptionUi>> =
+        getAvailableSemiFixExpenseOptionsUseCase(Unit)
+            .map { it.map(SemiFixExpenseOption::toSemiFixExpenseOptionUi) }
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000L), emptyList())
 
     fun onAddStaff() {
         navigator.navigateTo(OnboardingAddStaffDestination())
@@ -148,7 +173,7 @@ internal class OnboardingViewModel(
     fun onDeleteSemiFixExpense(id: SemiFixExpenseId) {
         viewModelScope.launch {
             deleteSemiFixExpenseUseCase(id).onFailure {
-                showSemiFixExpenseErrorMessage(
+                showErrorMessage(
                     message = TextWrapper.Resource(R.string.delete_semi_fix_expense_error_message)
                 )
             }
@@ -175,7 +200,7 @@ internal class OnboardingViewModel(
         when (_currentPage.value) {
             OnboardingPageUi.Staff -> updateScreenPage(OnboardingPageUi.SemiFixExpenses)
             OnboardingPageUi.SemiFixExpenses -> updateScreenPage(OnboardingPageUi.GarageInfo)
-            else -> Unit
+            OnboardingPageUi.GarageInfo -> saveGarageInfo()
         }
     }
 
@@ -191,15 +216,12 @@ internal class OnboardingViewModel(
         onboardingPage: OnboardingPageUi,
         staffList: List<StaffUi>,
         semiFixExpenses: List<SemiFixExpense>,
+        isGarageInformationValid: Boolean,
     ): Boolean = when (onboardingPage) {
         OnboardingPageUi.Staff -> staffList.isNotEmpty()
         OnboardingPageUi.SemiFixExpenses -> semiFixExpenses.isNotEmpty()
-        OnboardingPageUi.GarageInfo -> isValidGarageInfo()
+        OnboardingPageUi.GarageInfo -> isGarageInformationValid
     }
-
-    private fun isValidGarageInfo(): Boolean = _objectiveMarginInput.value.isNotEmpty() &&
-            _fillerInput.value.isNotEmpty() && _paintInput.value.isNotEmpty() &&
-            _varnishInput.value.isNotEmpty()
 
     private fun updateScreenPage(newContent: OnboardingPageUi) {
         _currentPage.value = newContent
@@ -219,7 +241,7 @@ internal class OnboardingViewModel(
     )
 
     private fun showSaveSemiFixExpenseError() {
-        showSemiFixExpenseErrorMessage(
+        showErrorMessage(
             message = TextWrapper.Resource(R.string.save_semi_fix_expense_error_message)
         )
         clearAndCloseSemiFixExpenseForm()
@@ -230,9 +252,34 @@ internal class OnboardingViewModel(
         closeSemiFixExpenseForm()
     }
 
-    private fun showSemiFixExpenseErrorMessage(message: TextWrapper) {
+    private fun showErrorMessage(message: TextWrapper) {
         _snackbarState.value = SnackbarState(message = message)
     }
+
+    private fun saveGarageInfo() {
+        viewModelScope.launch {
+            saveGarageInformation()
+                .onSuccess { navigator.navigateTo(VehiclesDestination()) }
+                .onFailure {
+                    Log.d("asdd", it.stackTraceToString())
+                    showErrorMessage(
+                        message = TextWrapper.Resource(R.string.save_garage_info_error_message),
+                    )
+                }
+        }
+    }
+
+    private suspend fun saveGarageInformation(): AppResult<Unit, Throwable> =
+        saveGarageInformationUseCase(
+            GarageInformationInput(
+                objectiveMargin = _objectiveMarginInput.value,
+                fillerPrice = _fillerInput.value,
+                paintPrice = _paintInput.value,
+                varnishPrice = _varnishInput.value,
+            )
+        ).andThen {
+            completeOnboardingUseCase(Unit)
+        }
 }
 
 private fun Staff.toStaffUi(): StaffUi = StaffUi(

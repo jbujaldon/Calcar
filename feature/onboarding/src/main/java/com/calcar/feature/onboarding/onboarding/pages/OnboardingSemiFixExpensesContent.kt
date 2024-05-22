@@ -48,6 +48,7 @@ import com.calcar.feature.onboarding.R
 import com.calcar.feature.onboarding.ui.components.AddButton
 import com.calcar.feature.onboarding.ui.components.EmptyContent
 import com.calcar.feature.onboarding.ui.components.PageScaffold
+import com.calcar.feature.onboarding.ui.components.TextFieldInput
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -260,12 +261,12 @@ private fun AddSemiFixExpenseInputs(
             onSelectOption = onSelectSemiFixExpenseOption,
             modifier = Modifier.padding(bottom = 16.dp),
         )
-        TextField(
+        TextFieldInput(
             value = semiFixExpenseAmount,
-            onValueChange = onSemiFixExpenseAmountChanged,
+            onValueChanged = onSemiFixExpenseAmountChanged,
+            label = stringResource(R.string.semi_fix_expense_amount_placeholder),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
             modifier = Modifier.fillMaxWidth(),
-            label = { Text(text = stringResource(R.string.semi_fix_expense_amount_placeholder)) },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
         )
     }
 }
@@ -285,17 +286,15 @@ private fun SemiFixExpenseOptionSelector(
         expanded = isExpanded,
         onExpandedChange = { isExpanded = !isExpanded },
     ) {
-        TextField(
+        TextFieldInput(
             value = selectedOption?.optionName?.getText(resources) ?: "",
-            onValueChange = {},
+            onValueChanged = {},
+            readOnly = true,
+            label = stringResource(R.string.select_semi_fix_expense_name_placeholder),
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(isExpanded) },
             modifier = modifier
                 .menuAnchor()
                 .fillMaxWidth(),
-            readOnly = true,
-            label = {
-                Text(text = stringResource(R.string.select_semi_fix_expense_name_placeholder))
-            },
-            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(isExpanded) },
         )
         ExposedDropdownMenu(
             expanded = isExpanded,

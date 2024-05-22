@@ -9,6 +9,7 @@
     <string name="keep_track_work_description">Añade tus trabajadores y asignales los vehículos con los que trabajan</string>
     <string name="previous_button">Atrás</string>
     <string name="next_button">Continuar</string>
+    <string name="finish_button">Finalizar</string>
     <string name="onboarding_page_staff_title">Añade tus trabajadores</string>
     <string name="onboarding_page_staff_description">Introduce los trabajadores de tu taller para poder gestionar los gastos y gestionar el trabajo</string>
     <string name="add_staff_button">Añadir trabajador</string>
@@ -41,4 +42,5 @@
     <string name="product_filler_placeholder">Aparejo RFU</string>
     <string name="product_paint_placeholder">Pintura confeccionada RFU</string>
     <string name="product_varnish_placeholder">Barniz RFU</string>
+    <string name="save_garage_info_error_message">Error al guardar la información del taller</string>
 </resources>

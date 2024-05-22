@@ -7,9 +7,9 @@ import com.calcar.feature.onboarding.onboarding.pages.OnboardingScreen
 import com.calcar.feature.onboarding.onboarding.staff.AddStaffScreen
 import com.calcar.feature.onboarding.welcome.WelcomeScreen
 
-object WelcomeDestination : NoArgDestination("welcome_route")
-object OnboardingDestination : NoArgDestination("onboarding_route")
-object OnboardingAddStaffDestination : NoArgDestination("onboarding_add_staff_route")
+object WelcomeDestination : NoArgDestination("welcome")
+object OnboardingDestination : NoArgDestination("onboarding")
+object OnboardingAddStaffDestination : NoArgDestination("onboarding_add_staff")
 
 fun NavGraphBuilder.onboardingRoute() {
     composable(WelcomeDestination) {

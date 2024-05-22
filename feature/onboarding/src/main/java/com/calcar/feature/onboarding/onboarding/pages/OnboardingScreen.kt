@@ -158,6 +158,7 @@ private fun OnboardingContent(
         },
         bottomBar = {
             BottomNavigationBar(
+                currentPage = currentPage,
                 isPreviousButtonVisible = isPreviousButtonVisible,
                 isNextButtonEnabled = isNextButtonEnabled,
                 onPreviousPage = onPreviousContent,
@@ -221,6 +222,7 @@ private fun TopProgressBar(progress: Float, modifier: Modifier = Modifier) {
 
 @Composable
 private fun BottomNavigationBar(
+    currentPage: OnboardingPageUi,
     isPreviousButtonVisible: Boolean,
     isNextButtonEnabled: Boolean,
     onPreviousPage: () -> Unit,
@@ -233,6 +235,7 @@ private fun BottomNavigationBar(
         shadowElevation = 16.dp,
     ) {
         BottomNavigationLayout(
+            currentPage = currentPage,
             isPreviousButtonVisible = isPreviousButtonVisible,
             isNextButtonEnabled = isNextButtonEnabled,
             onClickPrevious = onPreviousPage,
@@ -243,12 +246,18 @@ private fun BottomNavigationBar(
 
 @Composable
 private fun BottomNavigationLayout(
+    currentPage: OnboardingPageUi,
     isPreviousButtonVisible: Boolean,
     isNextButtonEnabled: Boolean,
     onClickPrevious: () -> Unit,
     onClickNext: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val nextButtonText = if (currentPage == OnboardingPageUi.GarageInfo) {
+        stringResource(R.string.finish_button)
+    } else {
+        stringResource(R.string.next_button)
+    }
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -259,6 +268,7 @@ private fun BottomNavigationLayout(
             onClickPrevious = onClickPrevious,
         )
         NextButton(
+            text = nextButtonText,
             onClick = onClickNext,
             enabled = isNextButtonEnabled,
             modifier = Modifier.align(Alignment.CenterEnd),
@@ -297,6 +307,7 @@ private fun PreviousButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
 
 @Composable
 private fun NextButton(
+    text: String,
     onClick: () -> Unit,
     enabled: Boolean,
     modifier: Modifier = Modifier,
@@ -306,7 +317,7 @@ private fun NextButton(
         modifier = modifier,
         enabled = enabled,
     ) {
-        Text(text = stringResource(R.string.next_button))
+        Text(text = text)
     }
 }
 

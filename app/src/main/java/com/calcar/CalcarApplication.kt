@@ -4,6 +4,7 @@ import android.app.Application
 import com.calcar.common.ui.di.uiModule
 import com.calcar.dependencies.commonDependencies
 import com.calcar.feature.onboarding.di.onboardingModule
+import com.calcar.feature.vehicles.di.vehiclesModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -15,7 +16,7 @@ class CalcarApplication : Application() {
         startKoin {
             androidLogger()
             androidContext(this@CalcarApplication)
-            modules(onboardingModule, commonDependencies)
+            modules(onboardingModule, vehiclesModule, commonDependencies)
         }
     }
 }

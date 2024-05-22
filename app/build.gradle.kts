@@ -39,6 +39,7 @@ dependencies {
     implementation(project(":common:ui"))
     implementation(project(":dependencies"))
     implementation(project(":feature:onboarding"))
+    implementation(project(":feature:vehicles"))
 
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core.ktx)

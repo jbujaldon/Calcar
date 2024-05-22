@@ -9,5 +9,6 @@ android {
 
 dependencies {
     implementation(project(":common:database"))
+    implementation(project(":common:datastore"))
     implementation(project(":common:domain"))
 }
