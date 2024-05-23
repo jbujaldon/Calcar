@@ -40,6 +40,7 @@ dependencies {
     implementation(project(":common:ui"))
     implementation(project(":dependencies"))
     implementation(project(":feature:onboarding"))
+    implementation(project(":feature:garage"))
     implementation(project(":feature:vehicles"))
 
     implementation(libs.androidx.activity.compose)

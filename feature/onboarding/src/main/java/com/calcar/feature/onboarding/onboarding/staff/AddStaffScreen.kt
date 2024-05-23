@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CheckCircleOutline
@@ -27,6 +28,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.calcar.feature.onboarding.R
@@ -218,6 +221,7 @@ private fun PersonalInformationInputs(
     onLastNameChanged: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {
         SectionTitle(text = stringResource(R.string.staff_personal_information_title))
         TextFieldInput(
@@ -225,12 +229,14 @@ private fun PersonalInformationInputs(
             onValueChanged = onNameChanged,
             label = stringResource(R.string.staff_name_placeholder),
             modifier = Modifier.fillMaxWidth(),
+            keyboardOptions = keyboardOptions,
         )
         TextFieldInput(
             value = lastName,
             onValueChanged = onLastNameChanged,
             label = stringResource(R.string.staff_last_names_placeholder),
             modifier = Modifier.fillMaxWidth(),
+            keyboardOptions = keyboardOptions,
         )
     }
 }
@@ -244,6 +250,10 @@ private fun WorkInformationInputs(
     onAgreementHoursChanged: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val keyboardOptions = KeyboardOptions(
+        keyboardType = KeyboardType.Decimal,
+        imeAction = ImeAction.Done
+    )
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {
         SectionTitle(text = stringResource(R.string.staff_work_information_title))
         TextFieldInput(
@@ -251,6 +261,11 @@ private fun WorkInformationInputs(
             onValueChanged = onSalaryChanged,
             label = stringResource(R.string.staff_salary_placeholder),
             modifier = Modifier.fillMaxWidth(),
+            keyboardOptions = if (isStaffDirect) {
+                keyboardOptions.copy(imeAction = ImeAction.Next)
+            } else {
+                keyboardOptions
+            }
         )
         if (isStaffDirect) {
             TextFieldInput(
@@ -258,6 +273,7 @@ private fun WorkInformationInputs(
                 onValueChanged = onAgreementHoursChanged,
                 label = stringResource(R.string.staff_agreement_hours_placeholder),
                 modifier = Modifier.fillMaxWidth(),
+                keyboardOptions = keyboardOptions,
             )
         }
     }

@@ -14,6 +14,7 @@ import com.calcar.common.ui.navigation.Destination
 import com.calcar.common.ui.navigation.NavPop
 import com.calcar.common.ui.navigation.Navigator
 import com.calcar.common.ui.navigation.Route
+import com.calcar.feature.garage.navigation.garageRoute
 import com.calcar.feature.onboarding.navigation.WelcomeDestination
 import com.calcar.feature.onboarding.navigation.onboardingRoute
 import com.calcar.feature.vehicles.navigation.vehiclesRoute
@@ -39,6 +40,7 @@ fun CalcarNavHost(
     ) {
         onboardingRoute()
         vehiclesRoute()
+        garageRoute()
     }
     LaunchedEffect(Unit) {
         handleNavEvents(navigator, navController) {

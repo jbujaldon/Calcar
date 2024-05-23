@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Calcar</string>
+    <string name="vehicles_tab">Vehículos</string>
+    <string name="garage_tab">Taller</string>
 </resources>
