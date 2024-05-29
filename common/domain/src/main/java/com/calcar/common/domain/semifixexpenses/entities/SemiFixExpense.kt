@@ -20,8 +20,3 @@ data class Amount private constructor(val value: Double) {
         }
     }
 }
-
-data class SemiFixExpenseOption(
-    val id: SemiFixExpenseId,
-    val name: TextWrapper,
-)

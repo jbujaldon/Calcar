@@ -1,5 +1,7 @@
 package com.calcar.common.domain.staff.entities
 
+import com.calcar.common.domain.entities.FullName
+
 sealed class StaffId(open val value: Long) {
     data object Empty : StaffId(-1L)
     data class Id(override val value: Long) : StaffId(value)
@@ -31,14 +33,6 @@ sealed class Staff {
     ) : Staff() {
         init {
             require(profession.isIndirect()) { "Profession must be an indirect type" }
-        }
-    }
-}
-
-data class FullName(val name: String, val lastName: String) {
-    init {
-        require(name.isNotEmpty() && lastName.isNotEmpty()) {
-            "Name and last name must not be empty"
         }
     }
 }

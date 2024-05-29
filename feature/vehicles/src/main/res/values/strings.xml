@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="vehicles_title">Tus vehículos</string>
+    <string name="budgeted_tab">Presupuestados</string>
+    <string name="repairing_tab">Reparación</string>
+    <string name="finished_tab">Finalizados</string>
+    <string name="add_vehicle_button">Añadir vehículo</string>
+    <string name="empty_budgeted_vehicles_list">Sin vehículos presupuestados</string>
+    <string name="empty_repairing_vehicles_list">Sin vehículos en reparación</string>
+    <string name="empty_finished_vehicles_list">Sin vehículos finalizados</string>
+    <string name="vehicle_pending_tag">Pendiente</string>
+    <string name="vehicle_accepted_tag">Aceptado</string>
+    <string name="reference_number">Nº: %s</string>
+</resources>

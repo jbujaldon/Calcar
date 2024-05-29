@@ -27,6 +27,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.calcar.common.ui.utils.toEuroCurrency
 import com.calcar.common.core.wrappers.toCompose
+import com.calcar.common.ui.components.Tag
 import com.calcar.feature.onboarding.R
 import com.calcar.feature.onboarding.ui.components.AddButton
 import com.calcar.feature.onboarding.ui.components.EmptyContent
@@ -155,18 +156,9 @@ private fun StaffInfo(
             color = MaterialTheme.colorScheme.secondary,
             style = MaterialTheme.typography.bodyMedium,
         )
-        Text(
+        Tag(
             text = stringResource(profession.label),
-            modifier = Modifier
-                .clip(CircleShape)
-                .background(
-                    profession.color
-                        .toCompose()
-                        .copy(alpha = 0.34f)
-                )
-                .padding(horizontal = 8.dp, vertical = 4.dp),
-            color = MaterialTheme.colorScheme.onSurface,
-            style = MaterialTheme.typography.labelSmall,
+            color = profession.color.toCompose()
         )
     }
 }

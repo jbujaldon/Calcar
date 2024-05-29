@@ -4,9 +4,9 @@ import com.calcar.common.core.result.AppResult
 import com.calcar.common.core.result.appRunCatching
 import com.calcar.common.database.daos.StaffDao
 import com.calcar.common.database.entities.StaffEntity
+import com.calcar.common.domain.entities.FullName
 import com.calcar.common.domain.staff.datasource.StaffDataSource
 import com.calcar.common.domain.staff.entities.AgreementHours
-import com.calcar.common.domain.staff.entities.FullName
 import com.calcar.common.domain.staff.entities.Profession
 import com.calcar.common.domain.staff.entities.Salary
 import com.calcar.common.domain.staff.entities.Staff

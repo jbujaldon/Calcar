@@ -36,7 +36,6 @@ class MainActivity : ComponentActivity() {
                     .collect()
             }
         }
-
         splashScreen.setKeepOnScreenCondition {
             when (initialLoadState) {
                 is InitialLoadState.Loading -> true

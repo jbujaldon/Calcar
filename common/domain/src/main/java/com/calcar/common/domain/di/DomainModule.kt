@@ -22,6 +22,8 @@ import com.calcar.common.domain.user.usecases.CompleteOnboardingUseCase
 import com.calcar.common.domain.user.usecases.CompleteOnboardingUseCaseImpl
 import com.calcar.common.domain.user.usecases.GetIsOnboardingCompletedUseCase
 import com.calcar.common.domain.user.usecases.GetIsOnboardingCompletedUseCaseImpl
+import com.calcar.common.domain.vehicles.usecases.GetVehiclesUseCase
+import com.calcar.common.domain.vehicles.usecases.GetVehiclesUseCaseImpl
 import org.koin.dsl.module
 
 val domainModule = module {
@@ -57,5 +59,8 @@ val domainModule = module {
     }
     factory<GetIsOnboardingCompletedUseCase> {
         GetIsOnboardingCompletedUseCaseImpl(get())
+    }
+    factory<GetVehiclesUseCase> {
+        GetVehiclesUseCaseImpl(get())
     }
 }
