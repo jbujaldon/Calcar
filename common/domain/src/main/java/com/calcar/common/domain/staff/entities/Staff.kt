@@ -3,7 +3,7 @@ package com.calcar.common.domain.staff.entities
 import com.calcar.common.domain.entities.FullName
 
 sealed class StaffId(open val value: Long) {
-    data object Empty : StaffId(-1L)
+    data object Empty : StaffId(0L)
     data class Id(override val value: Long) : StaffId(value)
 }
 

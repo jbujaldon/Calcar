@@ -1,5 +1,6 @@
 package com.calcar.feature.onboarding.onboarding.staff
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.calcar.common.core.result.AppResult
@@ -85,8 +86,10 @@ internal class AddStaffViewModel(
     fun onSaveAndAddOther() {
         viewModelScope.launch {
             saveStaff()
-                .onSuccess { onBackToSelection() }
-                .onFailure {  }
+                .onSuccess { onBackToSelection(); clearStaffInputs() }
+                .onFailure {
+                    Log.d("AddStaffViewModel", "onSaveAndAddOther: ${it.stackTraceToString()}")
+                }
         }
     }
 
@@ -115,6 +118,13 @@ internal class AddStaffViewModel(
             profession = _selectedProfession.value.toDomain()
         )
     )
+
+    private fun clearStaffInputs() {
+        _name.update { "" }
+        _lastName.update { "" }
+        _salary.update { "" }
+        _agreementHours.update { "" }
+    }
 }
 
 enum class AddStaffFormStep {
