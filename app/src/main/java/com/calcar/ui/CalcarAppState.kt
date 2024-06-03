@@ -9,7 +9,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import com.calcar.feature.garage.navigation.GarageDestination
-import com.calcar.feature.vehicles.navigation.VehiclesDestination
+import com.calcar.feature.vehicles.navigation.VehiclesListDestination
 import com.calcar.navigation.BottomDestination
 
 @Composable
@@ -28,8 +28,8 @@ class CalcarAppState(val navController: NavHostController) {
     val currentBottomDestination: BottomDestination?
         @Composable
         get() = when (currentDestination?.route) {
-            VehiclesDestination() -> BottomDestination.Vehicles
-            GarageDestination() -> BottomDestination.Garage
+            VehiclesListDestination.route -> BottomDestination.Vehicles
+            GarageDestination.route -> BottomDestination.Garage
             else -> null
         }
 
@@ -54,7 +54,7 @@ class CalcarAppState(val navController: NavHostController) {
 
         when (bottomDestination) {
             BottomDestination.Vehicles -> navController.navigate(
-                route = VehiclesDestination(),
+                route = VehiclesListDestination(),
                 navOptions = destinationNavOptions,
             )
             BottomDestination.Garage -> navController.navigate(

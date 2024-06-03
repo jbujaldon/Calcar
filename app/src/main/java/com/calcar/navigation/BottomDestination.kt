@@ -10,7 +10,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import com.calcar.R
 import com.calcar.common.ui.navigation.Destination
 import com.calcar.feature.garage.navigation.GarageDestination
-import com.calcar.feature.vehicles.navigation.VehiclesDestination
+import com.calcar.feature.vehicles.navigation.VehiclesListDestination
 
 enum class BottomDestination(
     @StringRes val labelRes: Int,
@@ -22,7 +22,7 @@ enum class BottomDestination(
         labelRes = R.string.vehicles_tab,
         selectedIcon = Icons.Filled.DriveEta,
         unselectedIcon = Icons.Outlined.DriveEta,
-        destination = VehiclesDestination
+        destination = VehiclesListDestination
     ),
     Garage(
         labelRes = R.string.garage_tab,

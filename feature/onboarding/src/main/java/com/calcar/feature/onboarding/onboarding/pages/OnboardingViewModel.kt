@@ -32,7 +32,7 @@ import com.calcar.common.ui.models.ProfessionUi
 import com.calcar.common.ui.models.SemiFixExpenseOptionUi
 import com.calcar.common.ui.snackbar.SnackbarState
 import com.calcar.feature.onboarding.R
-import com.calcar.feature.vehicles.navigation.VehiclesDestination
+import com.calcar.feature.vehicles.navigation.VehiclesListDestination
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -259,7 +259,7 @@ internal class OnboardingViewModel(
     private fun saveGarageInfo() {
         viewModelScope.launch {
             saveGarageInformation()
-                .onSuccess { navigator.navigateTo(VehiclesDestination()) }
+                .onSuccess { navigator.navigateTo(VehiclesListDestination()) }
                 .onFailure {
                     Log.d("asdd", it.stackTraceToString())
                     showErrorMessage(

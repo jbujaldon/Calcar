@@ -13,14 +13,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.calcar.feature.onboarding.navigation.WelcomeDestination
-import com.calcar.feature.vehicles.navigation.VehiclesDestination
+import com.calcar.feature.vehicles.navigation.VehiclesListDestination
 import com.calcar.navigation.BottomDestination
 import com.calcar.navigation.CalcarNavHost
 
 @Composable
 fun CalcarApp(isOnboardingCompleted: Boolean) {
     val appState = rememberCalcarAppState()
-    val startDestination = if (isOnboardingCompleted) VehiclesDestination else WelcomeDestination
+    val startDestination = if (isOnboardingCompleted) VehiclesListDestination else WelcomeDestination
 
     Scaffold(
         modifier = Modifier
